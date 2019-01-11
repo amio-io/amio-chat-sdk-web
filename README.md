@@ -2,20 +2,26 @@
 
 Client library for Amio Webchat.
 
+## Installation
+
+```bash
+npm install amio-webchat-sdk --save
+```
+
 ## How to use
 
 The library should work in all JS environments, including ES6, ES5 and (common) browsers.
 
 #### ES5
 ```js
-var AmioWebchatClient = require('amio-webchat-client')
+var AmioWebchatClient = require('amio-webchat-sdk')
 
 AmioWebchatClient.connect(...)
 ```
 
 #### ES6
 ```js
-import {AmioWebchatClient} from 'amio-webchat-client'
+import {AmioWebchatClient} from 'amio-webchat-sdk'
 
 AmioWebchatClient.connect(...)
 ```
@@ -65,10 +71,10 @@ Parameters:
 - **func** - Function. It should accept one parameter which contains the message content. The message content format is following:
 ```json
 {
-  "id": {{MESSAGE ID}},
+  "id": "{{MESSAGE ID}}",
   "content": {
-    "type": {{MESSAGE TYPE}},
-    "payload": {{MESSAGE PAYLOAD}}
+    "type": "{{MESSAGE TYPE}}",
+    "payload": "{{MESSAGE PAYLOAD}}"
   }
 }
 ```
@@ -83,4 +89,3 @@ AmioWebchatClient.onMessageReceived(function(data) {
 ## License
 
 [MIT](LICENSE)
-

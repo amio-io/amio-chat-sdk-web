@@ -1,5 +1,5 @@
 {
-  "name": "amio-webchat-client",
+  "name": "amio-webchat-sdk",
   "version": "0.1.0",
   "description": "Amio webchat JavaScript SDK for custom webchat implementation. https://amio.io",
   "main": "lib/amio-webchat-client.js",
