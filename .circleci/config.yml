@@ -1,0 +1,86 @@
+version: 2.1
+
+deploy_defaults: &deploy_defaults
+    working_directory: ~/amio-webchat-sdk
+    docker:
+      - image: amioio/cci-node-aws:0.0.1
+
+  # TODO to orb
+  npm_install:
+    description: Installs & caches npm dependencies.
+    parameters:
+      cache_version:
+        type: integer
+        default: 1
+    steps:
+    - restore_cache:
+        keys:
+        - v<< parameters.cache_version >>-dependencies-{{ checksum "package.json" }}
+        # fallback to using the latest cache if no exact match is found
+        - v<< parameters.cache_version >>-dependencies-
+    - run: npm install
+    - save_cache:
+        paths:
+        - node_modules
+        key: v<< parameters.cache_version >>-dependencies-{{ checksum "package.json" }}
+
+jobs:
+  build:
+    working_directory: ~/amio-webchat-sdk
+
+    docker:
+      - image: circleci/node:8.4.0
+
+    steps:
+      - checkout
+      - npm_install:
+          cache_version: 1
+      - run:
+          name: ls -la
+          command: ls -la
+      - run:
+          name: Run build & tests
+          command: npm run build
+
+      - run:
+          name: Check if the build produced the same version of lib/* files
+          command: git diff --exit-code
+
+      - run:
+          name: Check if the build produced the correct number of lib/* files
+          command: test `ls -l lib/ | wc -l` -eq 5
+
+  deploy_stag:
+    <<: *deploy_defaults
+
+    
+
+  deploy_prod:
+    <<: *deploy_defaults
+
+    
+
+workflows:
+  build_and_deploy:
+    jobs:
+      - build:
+          filters:
+            tags:
+              # PROD - run CircleCI on tag create
+              only: /^v[0-9]+(\.[0-9]+)*/
+      - deploy_prod:
+          requires:
+            - build
+          filters:
+            tags:
+              # run CircleCI on tag create
+              only: /^v[0-9]+(\.[0-9]+)*/
+            branches:
+              ignore: /.*/
+      - deploy_stag:
+          requires:
+            - build
+          filters:
+            branches:
+              # run CircleCI on push to master only (usually from a PR)
+              only: master
