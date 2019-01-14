@@ -27,12 +27,12 @@ AmioWebchatClient.connect(...)
 ```
 
 #### Browser (script tag)
-Minified version available [amio-webchat-client.min.js](lib/amio-webchat-client.min.js) (will be available in CDN in the future).
+Minified version available [amio-webchat-sdk.min.js](lib/amio-webchat-sdk.min.js) (will be available in CDN in the future).
 
 ```html
 <html>
   <head>
-    <script src="path/to/amio-webchat-client.min.js" type="text/javascript"></script>
+    <script src="path/to/amio-webchat-sdk.min.js" type="text/javascript"></script>
   </head>
   <body>
     <script type="text/javascript">

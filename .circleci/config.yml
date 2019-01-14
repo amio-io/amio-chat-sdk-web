@@ -1,9 +1,9 @@
 version: 2.1
 
-deploy_defaults: &deploy_defaults
-    working_directory: ~/amio-webchat-sdk
-    docker:
-      - image: amioio/cci-node-aws:0.0.1
+defaults: &defaults
+  working_directory: ~/repo
+  docker:
+    - image: circleci/node:8.9.1
 
 commands:
   # TODO to orb
@@ -27,10 +27,7 @@ commands:
 
 jobs:
   build:
-    working_directory: ~/amio-webchat-sdk
-
-    docker:
-      - image: circleci/node:8.4.0
+    <<: *defaults
 
     steps:
       - checkout
@@ -51,12 +48,37 @@ jobs:
           name: Check if the build produced the correct number of lib/* files
           command: test `ls -l lib/ | wc -l` -eq 5
 
+      - persist_to_workspace:
+          root: ~/amio-webchat-sdk
+          paths: .
+
+  publish_prod:
+    <<: *defaults
+
+    steps:
+      - attach_workspace:
+          at: ~/amio-webchat-sdk
+      - run:
+          name: Authenticate with registry
+          command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/amio-webchat-sdk/.npmrc
+      - run:
+          name: Publish package
+          command: npm publish
+
 workflows:
-  build_and_deploy:
+  build_and_publish:
     jobs:
       - build:
           filters:
             tags:
               # PROD - run CircleCI on tag create
               only: /^v[0-9]+(\.[0-9]+)*/
-
+      - publish_prod:
+          requires:
+            - build
+          filters:
+            tags:
+              # run CircleCI on tag create
+              only: /^v[0-9]+(\.[0-9]+)*/
+            branches:
+              ignore: /.*/
