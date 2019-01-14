@@ -5,6 +5,7 @@ deploy_defaults: &deploy_defaults
     docker:
       - image: amioio/cci-node-aws:0.0.1
 
+commands:
   # TODO to orb
   npm_install:
     description: Installs & caches npm dependencies.
