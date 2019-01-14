@@ -1,7 +1,7 @@
 version: 2.1
 
 defaults: &defaults
-  working_directory: ~/repo
+  working_directory: ~/amio-webchat-sdk
   docker:
     - image: circleci/node:8.9.1
 
@@ -58,6 +58,9 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/amio-webchat-sdk
+      - run:
+          name: Check version bump
+          command: npm run can-publish-nix
       - run:
           name: Authenticate with registry
           command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/amio-webchat-sdk/.npmrc
