@@ -45,7 +45,7 @@ jobs:
 
       - run:
           name: Check if the build produced the same version of lib/* files
-          command: git diff --exit-code
+          command: git diff HEAD --exit-code -- lib/*
 
       - run:
           name: Check if the build produced the correct number of lib/* files
