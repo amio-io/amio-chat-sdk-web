@@ -1,7 +1,7 @@
 /* global describe, it, before */
 
 import chai from 'chai'
-import AmioWebchatClient from '../lib/amio-webchat-client'
+import AmioWebchatClient from '../lib/amio-webchat-sdk'
 
 chai.expect()
 
