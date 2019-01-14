@@ -51,16 +51,6 @@ jobs:
           name: Check if the build produced the correct number of lib/* files
           command: test `ls -l lib/ | wc -l` -eq 5
 
-  deploy_stag:
-    <<: *deploy_defaults
-
-    
-
-  deploy_prod:
-    <<: *deploy_defaults
-
-    
-
 workflows:
   build_and_deploy:
     jobs:
@@ -69,19 +59,4 @@ workflows:
             tags:
               # PROD - run CircleCI on tag create
               only: /^v[0-9]+(\.[0-9]+)*/
-      - deploy_prod:
-          requires:
-            - build
-          filters:
-            tags:
-              # run CircleCI on tag create
-              only: /^v[0-9]+(\.[0-9]+)*/
-            branches:
-              ignore: /.*/
-      - deploy_stag:
-          requires:
-            - build
-          filters:
-            branches:
-              # run CircleCI on push to master only (usually from a PR)
-              only: master
+
