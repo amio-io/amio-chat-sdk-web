@@ -73,9 +73,13 @@ class AmioWebchatClient {
 
     this.socket.on(SOCKET_CONNECTION_REJECTED, data => {
       if(data.error_code === ERROR_CODE_CHANNEL_ID_CHANGED) {
+        console.warn('Connection rejected from server due to a change in Channel ID.' +
+          'New session will be created automatically.')
         this.storage.removeItem(sessionName)
         setTimeout(() => this.connect(config), 0)
+        return
       }
+      console.error('Connection rejected from server. Error:', data)
     })
   }
 
