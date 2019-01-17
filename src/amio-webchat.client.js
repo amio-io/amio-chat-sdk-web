@@ -8,14 +8,17 @@ const SOCKET_MESSAGE_CLIENT = 'message_client'
 const SOCKET_MESSAGE_SERVER = 'message_server'
 const SOCKET_SESSION_CREATED = 'session_created'
 const SOCKET_CONNECTION_REJECTED = 'connection_rejected'
+const SOCKET_MESSAGES_READ = 'messages_read'
 
-const ERROR_CHANNEL_ID_CHANGED = 1
+const ERROR_CODE_CHANNEL_ID_CHANGED = 1
+
+const ERROR_MESSAGE_NOT_CONNECTED = 'Not connected, call connect() first.'
 
 class AmioWebchatClient {
 
   constructor() {
     this.storage = window.localStorage
-    if (!this.storage) {
+    if(!this.storage) {
       // for tests
       this.storage = {}
       this.storage.getItem = () => {}
@@ -28,10 +31,13 @@ class AmioWebchatClient {
   }
 
   connect(config) {
-    if (!config || !config.channelId) {
+    if(!config || !config.channelId) {
       console.error('Could not connect: config.channelId is invalid.')
       return
     }
+
+    // for dev purposes: set config._amioWebchatServerUrl to use a different server
+    const serverUrl = config._amioWebchatServerUrl || AMIO_WEBCHAT_SERVER_URL
     const sessionName = config.localStorageSessionName || DEFAULT_LOCAL_STORAGE_SESSION_NAME
 
     const opts = {
@@ -46,10 +52,10 @@ class AmioWebchatClient {
     }
 
     this.sessionId = this.storage.getItem(sessionName)
-    if (this.sessionId) {
+    if(this.sessionId) {
       opts.query.sessionId = this.sessionId
     }
-    this.socket = io(AMIO_WEBCHAT_SERVER_URL, opts)
+    this.socket = io(serverUrl, opts)
 
     this.socket.on(SOCKET_MESSAGE_SERVER, (data, ack) => {
       ack({
@@ -66,7 +72,7 @@ class AmioWebchatClient {
     })
 
     this.socket.on(SOCKET_CONNECTION_REJECTED, data => {
-      if (data.error_code === ERROR_CHANNEL_ID_CHANGED) {
+      if(data.error_code === ERROR_CODE_CHANNEL_ID_CHANGED) {
         this.storage.removeItem(sessionName)
         setTimeout(() => this.connect(config), 0)
       }
@@ -74,12 +80,12 @@ class AmioWebchatClient {
   }
 
   sendMessage(content) {
-    if (!this.socket) {
-      console.error('Not connected, call connect() first.')
+    if(!this.socket) {
+      console.error(ERROR_MESSAGE_NOT_CONNECTED)
       return
     }
 
-    if (typeof content !== 'object' || content === null) {
+    if(typeof content !== 'object' || content === null) {
       console.error('Content is not an object (did you want to use sendTextMessage() instead?).')
       return
     }
@@ -96,6 +102,15 @@ class AmioWebchatClient {
     }
 
     return this.sendMessage(content)
+  }
+
+  markMessagesAsRead() {
+    if(!this.socket) {
+      console.error(ERROR_MESSAGE_NOT_CONNECTED)
+      return
+    }
+
+    this.socket.emit(SOCKET_MESSAGES_READ, '') // no data required
   }
 
   onMessageReceived(func) {

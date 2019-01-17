@@ -64,6 +64,12 @@ Sends a text message. This is just a handy shortcut for `sendMessage({type: 'tex
 Parameters:
 - **text** - The content of the text message.
 
+### markMessagesAsRead()
+Sends an event indicating that all received messages were read by the receiver. It is up to the implementer to decide when the messages are considered read and call this function.
+
+Parameters:
+- none
+
 ### onMessageReceived(func)
 Sets a callback function that will be called every time a message is received from server.
 
