@@ -47,7 +47,7 @@
     "handle-callback-err": [2, "^(err|error|anySpecificError)$" ],
     "indent": [2, 2, { "SwitchCase": 1 }],
     "key-spacing": [2, { "beforeColon": false, "afterColon": true }],
-    "keyword-spacing": [2, {"before": true, "after": true}],
+    "keyword-spacing": [2, {"before": true, "after": false, "overrides": {"from": {"after": true}, "export": {"after": true}}}],
     "linebreak-style": 0,
     "max-depth": 0,
     "max-len": [2, 120, 4],
