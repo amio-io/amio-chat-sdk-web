@@ -1,6 +1,10 @@
+TODO new function docs
+
 # Amio Webchat SDK
 
 Client library for Amio Webchat.
+
+**!!! THIS PROJECT IS CURRENTLY IN ALPHA STAGE, BREAKING CHANGES MAY OCCUR AT ANY TIME**
 
 ## Installation
 
