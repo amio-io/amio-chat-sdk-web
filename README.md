@@ -51,12 +51,12 @@ Connects to Amio Webchat server.
 
 Parameters:
 - **config** - Configuration object. Currently supported params are:
-  - **channelId** - ID of your Amio Webchat channel
-  - **localStorageSessionName** - Allows to customize the name of the Local Storage field that holds a session ID
+  - **channelId** - ID of your Amio Webchat channel.
+  - **localStorageSessionName** - (Optional) Allows to customize the name of the Local Storage field that holds a session ID.
 
 ```js
 AmioWebchatClient.connect({
-  channelId: '12345678'
+  channelId: '6495613231087502282'
 })
 .then(() => {
   console.log('Connection successful')
@@ -116,7 +116,7 @@ Parameters:
 
 Response format:
 - **messages** - Array of messages, sorted from newest to oldest.
-- **cursor.next** - Cursor that should be used in the next call of listMessages().
+- **cursor.next** - Cursor pointing to subsequent messages. Use this cursor in the next call of `listMessages()`.
 - **cursor.has_next** - False if there are no more messages in the history, true otherwise.
 ```json
 { 
