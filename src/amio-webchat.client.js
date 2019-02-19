@@ -30,6 +30,7 @@ class AmioWebchatClient {
     this.messageReceivedHandler = () => {
       console.error('MessageReceivedHandler is not set, use onMessageReceived() to set it.')
     }
+    this.listMessagesResponseHandler = () => {}
   }
 
   connect(config) {
