@@ -6,9 +6,11 @@ const DEFAULT_LOCAL_STORAGE_SESSION_NAME = 'amio_webchat_session'
 
 const SOCKET_MESSAGE_CLIENT = 'message_client'
 const SOCKET_MESSAGE_SERVER = 'message_server'
-const SOCKET_SESSION_CREATED = 'session_created'
+const SOCKET_CONNECTION_ACCEPTED = 'connection_accepted'
 const SOCKET_CONNECTION_REJECTED = 'connection_rejected'
 const SOCKET_MESSAGES_READ = 'messages_read'
+const SOCKET_MESSAGE_DELIVERED = 'message_delivered'
+const SOCKET_LIST_MESSAGES = 'list_messages'
 
 const ERROR_CODE_CHANNEL_ID_CHANGED = 1
 
@@ -31,71 +33,81 @@ class AmioWebchatClient {
   }
 
   connect(config) {
-    if(!config || !config.channelId) {
-      console.error('Could not connect: config.channelId is invalid.')
-      return
-    }
-
-    // for dev purposes: set config._amioWebchatServerUrl to use a different server
-    const serverUrl = config._amioWebchatServerUrl || AMIO_WEBCHAT_SERVER_URL
-    const sessionName = config.localStorageSessionName || DEFAULT_LOCAL_STORAGE_SESSION_NAME
-
-    const opts = {
-      reconnection: true,
-      reconnectionDelay: 1000,
-      reconnectionDelayMax: 5000,
-      reconnectionAttempts: 99999,
-      query: {
-        v: 1,
-        channelId: config.channelId
-      }
-    }
-
-    this.sessionId = this.storage.getItem(sessionName)
-    if(this.sessionId) {
-      opts.query.sessionId = this.sessionId
-    }
-    this.socket = io(serverUrl, opts)
-
-    this.socket.on(SOCKET_MESSAGE_SERVER, (data, ack) => {
-      ack({
-        message_id: data.id
-      })
-      this.messageReceivedHandler(data)
-    })
-
-    this.socket.on(SOCKET_SESSION_CREATED, data => {
-      const sessionId = data.session_id
-
-      this.sessionId = sessionId
-      this.storage.setItem(sessionName, data.session_id)
-    })
-
-    this.socket.on(SOCKET_CONNECTION_REJECTED, data => {
-      if(data.error_code === ERROR_CODE_CHANNEL_ID_CHANGED) {
-        console.warn('Connection rejected from server due to a change in Channel ID.' +
-          'New session will be created automatically.')
-        this.storage.removeItem(sessionName)
-        setTimeout(() => this.connect(config), 0)
+    return new Promise((resolve, reject) => {
+      if(!config || !config.channelId) {
+        reject('Could not connect: config.channelId is invalid.')
         return
       }
-      console.error('Connection rejected from server. Error:', data)
+
+      // for dev purposes: set config._amioWebchatServerUrl to use a different server
+      const serverUrl = config._amioWebchatServerUrl || AMIO_WEBCHAT_SERVER_URL
+      const sessionName = config.localStorageSessionName || DEFAULT_LOCAL_STORAGE_SESSION_NAME
+
+      const opts = {
+        reconnection: true,
+        reconnectionDelay: 1000,
+        reconnectionDelayMax: 5000,
+        reconnectionAttempts: 99999,
+        query: {
+          v: 1,
+          channelId: config.channelId
+        }
+      }
+
+      this.sessionId = this.storage.getItem(sessionName)
+      if(this.sessionId) {
+        opts.query.sessionId = this.sessionId
+      }
+      this.socket = io(serverUrl, opts)
+
+      this.socket.on(SOCKET_MESSAGE_SERVER, data => {
+        this.socket.emit(SOCKET_MESSAGE_DELIVERED, {
+          message_id: data.id
+        }, () => {})
+        this.messageReceivedHandler(data)
+      })
+
+      this.socket.on(SOCKET_CONNECTION_ACCEPTED, data => {
+        const sessionId = data.session_id
+
+        this.sessionId = sessionId
+        this.storage.setItem(sessionName, data.session_id)
+        resolve()
+      })
+
+      this.socket.on(SOCKET_CONNECTION_REJECTED, data => {
+        if(data.error_code === ERROR_CODE_CHANNEL_ID_CHANGED) {
+          console.warn('Session invalidated by the server. New session will be created automatically.')
+          this.storage.removeItem(sessionName)
+          this.connect(config)
+            .then(resolve)
+            .catch(reject)
+          return
+        }
+        reject('Connection rejected from server. Error:', data)
+      })
     })
   }
 
   sendMessage(content) {
-    if(!this.socket) {
-      console.error(ERROR_MESSAGE_NOT_CONNECTED)
-      return
-    }
+    return new Promise((resolve, reject) => {
+      if(!this.socket) {
+        reject(ERROR_MESSAGE_NOT_CONNECTED)
+        return
+      }
 
-    if(typeof content !== 'object' || content === null) {
-      console.error('Content is not an object (did you want to use sendTextMessage() instead?).')
-      return
-    }
+      if(typeof content !== 'object' || content === null) {
+        reject('Content is not an object (did you want to use sendTextMessage() instead?).')
+        return
+      }
 
-    this.socket.emit(SOCKET_MESSAGE_CLIENT, {
-      content: content
+      const data = {
+        content: content
+      }
+
+      this.socket.emit(SOCKET_MESSAGE_CLIENT, data, (response) => {
+        processResponse(response, resolve, reject)
+      })
     })
   }
 
@@ -109,18 +121,48 @@ class AmioWebchatClient {
   }
 
   markMessagesAsRead() {
-    if(!this.socket) {
-      console.error(ERROR_MESSAGE_NOT_CONNECTED)
-      return
-    }
+    return new Promise((resolve, reject) => {
+      if(!this.socket) {
+        reject(ERROR_MESSAGE_NOT_CONNECTED)
+        return
+      }
 
-    this.socket.emit(SOCKET_MESSAGES_READ, '') // no data required
+      this.socket.emit(SOCKET_MESSAGES_READ, {}, (response) => {
+        processResponse(response, resolve, reject)
+      })
+    })
+  }
+
+  listMessages(max, cursor) {
+    return new Promise((resolve, reject) => {
+      if(!this.socket) {
+        reject(ERROR_MESSAGE_NOT_CONNECTED)
+        return
+      }
+
+      const params = {
+        max,
+        cursor
+      }
+
+      this.socket.emit(SOCKET_LIST_MESSAGES, params, (response) => {
+        processResponse(response, resolve, reject)
+      })
+    })
   }
 
   onMessageReceived(func) {
     this.messageReceivedHandler = func
   }
 
+}
+
+function processResponse(response, resolve, reject) {
+  if(response.error_code) {
+    reject(response)
+    return
+  }
+  resolve(response)
 }
 
 export default new AmioWebchatClient()
