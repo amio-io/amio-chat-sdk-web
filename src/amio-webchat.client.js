@@ -51,13 +51,13 @@ class AmioWebchatClient {
         reconnectionAttempts: 99999,
         query: {
           v: 1,
-          channelId: config.channelId
+          channel_id: config.channelId
         }
       }
 
       this.sessionId = this.storage.getItem(sessionName)
       if(this.sessionId) {
-        opts.query.sessionId = this.sessionId
+        opts.query.session_id = this.sessionId
       }
       this.socket = io(serverUrl, opts)
 
