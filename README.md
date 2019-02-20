@@ -178,10 +178,14 @@ Parameters:
 ```json
 {
   "id": "{{MESSAGE ID}}",
+  "direction": "received",
   "content": {
     "type": "{{MESSAGE TYPE}}",
     "payload": "{{MESSAGE PAYLOAD}}"
-  }
+  },
+  "sent": "{{SENT_TIMESTAMP}}",
+  "delivered": "{{DELIVERED_TIMESTAMP}}",
+  "read": "{{READ_TIMESTAMP}}"
 }
 ```
 

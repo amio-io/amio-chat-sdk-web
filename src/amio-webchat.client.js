@@ -10,8 +10,7 @@ const SOCKET_CONNECTION_ACCEPTED = 'connection_accepted'
 const SOCKET_CONNECTION_REJECTED = 'connection_rejected'
 const SOCKET_MESSAGES_READ = 'messages_read'
 const SOCKET_MESSAGE_DELIVERED = 'message_delivered'
-const SOCKET_LIST_MESSAGES_REQUEST = 'list_messages_req'
-const SOCKET_LIST_MESSAGES_RESPONSE = 'list_messages_res'
+const SOCKET_LIST_MESSAGES = 'list_messages'
 
 const ERROR_CODE_CHANNEL_ID_CHANGED = 1
 
@@ -65,12 +64,8 @@ class AmioWebchatClient {
       this.socket.on(SOCKET_MESSAGE_SERVER, data => {
         this.socket.emit(SOCKET_MESSAGE_DELIVERED, {
           message_id: data.id
-        })
+        }, () => {})
         this.messageReceivedHandler(data)
-      })
-
-      this.socket.on(SOCKET_LIST_MESSAGES_RESPONSE, data => {
-        this.listMessagesResponseHandler(data)
       })
 
       this.socket.on(SOCKET_CONNECTION_ACCEPTED, data => {
@@ -107,10 +102,13 @@ class AmioWebchatClient {
         return
       }
 
-      this.socket.emit(SOCKET_MESSAGE_CLIENT, {
+      const data = {
         content: content
+      }
+
+      this.socket.emit(SOCKET_MESSAGE_CLIENT, data, (response) => {
+        processResponse(response, resolve, reject)
       })
-      resolve()
     })
   }
 
@@ -130,8 +128,9 @@ class AmioWebchatClient {
         return
       }
 
-      this.socket.emit(SOCKET_MESSAGES_READ, '') // no data required
-      resolve()
+      this.socket.emit(SOCKET_MESSAGES_READ, {}, (response) => {
+        processResponse(response, resolve, reject)
+      })
     })
   }
 
@@ -142,11 +141,13 @@ class AmioWebchatClient {
         return
       }
 
-      this.listMessagesResponseHandler = resolve
-
-      this.socket.emit(SOCKET_LIST_MESSAGES_REQUEST, {
+      const params = {
         max,
         cursor
+      }
+
+      this.socket.emit(SOCKET_LIST_MESSAGES, params, (response) => {
+        processResponse(response, resolve, reject)
       })
     })
   }
@@ -155,6 +156,14 @@ class AmioWebchatClient {
     this.messageReceivedHandler = func
   }
 
+}
+
+function processResponse(response, resolve, reject) {
+  if(response.error_code) {
+    reject(response)
+    return
+  }
+  resolve(response)
 }
 
 export default new AmioWebchatClient()
