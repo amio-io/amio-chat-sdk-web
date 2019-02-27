@@ -196,6 +196,32 @@ AmioWebchatClient.onMessageReceived((data) => {
 })
 ```
 
+### onMessageEcho(func)
+Sets a callback function that will be called every time a message echo is received from server. Message echo means a message was sent through a different connection associated with the same session (for example, the user has two browser tabs opened, so that's the same session but two different connections).
+
+Parameters:
+- **func** - Function. It should accept one parameter which contains the message content. The message content format is following (conveniently, it's the same as received message, except `direction` will be `sent`):
+```json
+{
+  "id": "{{MESSAGE ID}}",
+  "direction": "sent",
+  "content": {
+    "type": "{{MESSAGE TYPE}}",
+    "payload": "{{MESSAGE PAYLOAD}}"
+  },
+  "sent": "{{SENT_TIMESTAMP}}",
+  "delivered": "{{DELIVERED_TIMESTAMP}}",
+  "read": "{{READ_TIMESTAMP}}"
+}
+```
+
+Example usage:
+```js
+AmioWebchatClient.onMessageEcho((data) => {
+  console.log('message echo', data)
+})
+```
+
 ## License
 
 [MIT](LICENSE)

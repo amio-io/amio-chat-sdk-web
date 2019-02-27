@@ -6,6 +6,7 @@ const DEFAULT_LOCAL_STORAGE_SESSION_NAME = 'amio_webchat_session'
 
 const SOCKET_MESSAGE_CLIENT = 'message_client'
 const SOCKET_MESSAGE_SERVER = 'message_server'
+const SOCKET_MESSAGE_ECHO = 'message_client_echo'
 const SOCKET_CONNECTION_ACCEPTED = 'connection_accepted'
 const SOCKET_CONNECTION_REJECTED = 'connection_rejected'
 const SOCKET_MESSAGES_READ = 'messages_read'
@@ -29,6 +30,9 @@ class AmioWebchatClient {
     this.sessionId = null
     this.messageReceivedHandler = () => {
       console.error('MessageReceivedHandler is not set, use onMessageReceived() to set it.')
+    }
+    this.messageEchoHandler = () => {
+      console.error('MessageEchoHandler is not set, use onMessageEcho() to set it.')
     }
     this.listMessagesResponseHandler = () => {}
   }
@@ -66,6 +70,10 @@ class AmioWebchatClient {
           message_id: data.id
         }, () => {})
         this.messageReceivedHandler(data)
+      })
+
+      this.socket.on(SOCKET_MESSAGE_ECHO, data => {
+        this.messageEchoHandler(data)
       })
 
       this.socket.on(SOCKET_CONNECTION_ACCEPTED, data => {
@@ -154,6 +162,10 @@ class AmioWebchatClient {
 
   onMessageReceived(func) {
     this.messageReceivedHandler = func
+  }
+
+  onMessageEcho(func) {
+    this.messageEchoHandler = func
   }
 
 }
