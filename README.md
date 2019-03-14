@@ -91,6 +91,21 @@ Sends a text message. This is just a handy shortcut for `sendMessage({type: 'tex
 Parameters:
 - **text** - The content of the text message.
 
+### sendNotification(payload)
+Sends a notification. The `payload` can be any valid JSON element (string, object, number...).
+
+```js
+AmioWebchatClient.sendNotification({
+  event: 'my_awesome_event'
+})
+.then(() => {
+  console.log('Notification sent successfully')
+})
+.catch(err => {
+  console.log('Error while sending notification:', err)
+})
+```
+
 ### markMessagesAsRead()
 Sends an event indicating that all received messages were read by the receiver. It is up to the implementer to decide when the messages are considered read and call this function.
 
@@ -219,6 +234,36 @@ Example usage:
 ```js
 AmioWebchatClient.onMessageEcho((data) => {
   console.log('message echo', data)
+})
+```
+
+### onNotificationReceived(func)
+Sets a callback function that will be called every time a notification is received from server.
+
+Parameters:
+- **func** - Function. It should accept one parameter which contains the notification payload. The payload can be any valid JSON element (string, object, number...).
+
+Example usage:
+```js
+AmioWebchatClient.onNotificationReceived((payload) => {
+  console.log('received notification', payload)
+})
+```
+
+### onConnectionStateChanged(func)
+Sets a callback function that will be called when connection state changes from offline to online or vice versa.
+
+Parameters:
+- **func** - Function. It should accept one parameter which will be set to `true` when connection changes to online, and `false` when connection changes to offline.
+
+Example usage:
+```js
+AmioWebchatClient.onConnectionStateChanged((online) => {
+  if(online) {
+    console.log('We are online :)')
+  } else {
+    console.log('We are offline :(')
+  }
 })
 ```
 

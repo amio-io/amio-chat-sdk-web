@@ -4,9 +4,13 @@ const AMIO_WEBCHAT_SERVER_URL = 'webchat.amio.io'
 
 const DEFAULT_LOCAL_STORAGE_SESSION_NAME = 'amio_webchat_session'
 
+const SOCKET_IO_DISCONNECT = 'disconnect'
+
 const SOCKET_MESSAGE_CLIENT = 'message_client'
 const SOCKET_MESSAGE_SERVER = 'message_server'
 const SOCKET_MESSAGE_ECHO = 'message_client_echo'
+const SOCKET_NOTIFICATION_CLIENT = 'notification_client'
+const SOCKET_NOTIFICATION_SERVER = 'notification_server'
 const SOCKET_CONNECTION_ACCEPTED = 'connection_accepted'
 const SOCKET_CONNECTION_REJECTED = 'connection_rejected'
 const SOCKET_MESSAGES_READ = 'messages_read'
@@ -34,7 +38,8 @@ class AmioWebchatClient {
     this.messageEchoHandler = () => {
       console.error('MessageEchoHandler is not set, use onMessageEcho() to set it.')
     }
-    this.listMessagesResponseHandler = () => {}
+    this.notificationReceivedHandler = () => {}
+    this.connectionStateChangedHandler = () => {}
   }
 
   connect(config) {
@@ -76,11 +81,16 @@ class AmioWebchatClient {
         this.messageEchoHandler(data)
       })
 
+      this.socket.on(SOCKET_NOTIFICATION_SERVER, data => {
+        this.notificationReceivedHandler(data.payload)
+      })
+
       this.socket.on(SOCKET_CONNECTION_ACCEPTED, data => {
         const sessionId = data.session_id
 
         this.sessionId = sessionId
         this.storage.setItem(sessionName, data.session_id)
+        this.connectionStateChangedHandler(true)
         resolve()
       })
 
@@ -94,6 +104,10 @@ class AmioWebchatClient {
           return
         }
         reject('Connection rejected from server. Error:', data)
+      })
+
+      this.socket.on(SOCKET_IO_DISCONNECT, () => {
+        this.connectionStateChangedHandler(false)
       })
     })
   }
@@ -116,6 +130,24 @@ class AmioWebchatClient {
 
       this.socket.emit(SOCKET_MESSAGE_CLIENT, data, (response) => {
         processResponse(response, resolve, reject)
+      })
+    })
+  }
+
+  sendNotification(payload) {
+    return new Promise((resolve, reject) => {
+      if(!this.socket) {
+        reject(ERROR_MESSAGE_NOT_CONNECTED)
+        return
+      }
+
+      const data = {
+        type: 'custom',
+        payload: payload
+      }
+
+      this.socket.emit(SOCKET_NOTIFICATION_CLIENT, data, (response) => {
+        processResponse(resolve, reject, response)
       })
     })
   }
@@ -166,6 +198,14 @@ class AmioWebchatClient {
 
   onMessageEcho(func) {
     this.messageEchoHandler = func
+  }
+
+  onNotificationReceived(func) {
+    this.notificationReceivedHandler = func
+  }
+
+  onConnectionStateChanged(func) {
+    this.connectionStateChangedHandler = func
   }
 
 }
