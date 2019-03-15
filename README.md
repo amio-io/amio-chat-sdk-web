@@ -16,16 +16,16 @@ The library should work in all JS environments, including ES6, ES5 and (common) 
 
 #### ES5
 ```js
-var AmioWebchatClient = require('amio-webchat-sdk')
+var amioWebchatClient = require('amio-webchat-sdk')
 
-AmioWebchatClient.connect(...)
+amioWebchatClient.connect(...)
 ```
 
 #### ES6
 ```js
-import {AmioWebchatClient} from 'amio-webchat-sdk'
+import {amioWebchatClient} from 'amio-webchat-sdk'
 
-AmioWebchatClient.connect(...)
+amioWebchatClient.connect(...)
 ```
 
 #### Browser (script tag)
@@ -38,7 +38,7 @@ Minified version available [amio-webchat-sdk.min.js](lib/amio-webchat-sdk.min.js
   </head>
   <body>
     <script type="text/javascript">
-        AmioWebchatClient.connect(...);
+        amioWebchatClient.connect(...);
     </script>
   </body>
 </html>
@@ -55,7 +55,7 @@ Parameters:
   - **localStorageSessionName** - (Optional) Allows to customize the name of the Local Storage field that holds a session ID.
 
 ```js
-AmioWebchatClient.connect({
+amioWebchatClient.connect({
   channelId: '6495613231087502282'
 })
 .then(() => {
@@ -73,7 +73,7 @@ Parameters:
 - **content** - Message content. See [Amio documentation](https://docs.amio.io/v1.0/reference#messages-send-message) for details about the format.
 
 ```js
-AmioWebchatClient.sendMessage({
+amioWebchatClient.sendMessage({
   type: 'text',
   payload: 'Hello world'
 })
@@ -95,7 +95,7 @@ Parameters:
 Sends a notification. The `payload` can be any valid JSON element (string, object, number...).
 
 ```js
-AmioWebchatClient.sendNotification({
+amioWebchatClient.sendNotification({
   event: 'my_awesome_event'
 })
 .then(() => {
@@ -113,7 +113,7 @@ Parameters:
 - none
 
 ```js
-AmioWebchatClient.markMessagesAsRead()
+amioWebchatClient.markMessagesAsRead()
 .then(() => {
   console.log('Messages marked as read')
 })
@@ -169,12 +169,12 @@ Response format:
 Example usage:
 ```js
 var nextCursor = null
-AmioWebchatClient.listMessages(5, nextCursor)
+amioWebchatClient.listMessages(5, nextCursor)
 .then(response => {
   console.log('First 5 messages loaded:', response.messages)
   nextCursor = response.cursor.next //save the cursor so we can load more messages later
 
-  AmioWebchatClient.listMessages(5, nextCursor)
+  amioWebchatClient.listMessages(5, nextCursor)
   .then(nextResponse => {
     console.log('Next 5 messages loaded:', nextResponse.messages)
     nextCursor = nextResponse.cursor.next //save the cursor so we can load more messages later
@@ -206,7 +206,7 @@ Parameters:
 
 Example usage:
 ```js
-AmioWebchatClient.onMessageReceived((data) => {
+amioWebchatClient.onMessageReceived((data) => {
   console.log('received message', data)
 })
 ```
@@ -232,7 +232,7 @@ Parameters:
 
 Example usage:
 ```js
-AmioWebchatClient.onMessageEcho((data) => {
+amioWebchatClient.onMessageEcho((data) => {
   console.log('message echo', data)
 })
 ```
@@ -245,7 +245,7 @@ Parameters:
 
 Example usage:
 ```js
-AmioWebchatClient.onNotificationReceived((payload) => {
+amioWebchatClient.onNotificationReceived((payload) => {
   console.log('received notification', payload)
 })
 ```
@@ -258,7 +258,7 @@ Parameters:
 
 Example usage:
 ```js
-AmioWebchatClient.onConnectionStateChanged((online) => {
+amioWebchatClient.onConnectionStateChanged((online) => {
   if(online) {
     console.log('We are online :)')
   } else {
