@@ -1,9 +1,9 @@
 {
   "name": "amio-webchat-sdk",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "Amio webchat JavaScript SDK for custom webchat implementation. https://amio.io",
-  "main": "lib/amio-webchat-client.js",
-  "module": "src/index.js",
+  "main": "lib/amio-webchat-sdk.js",
+  "module": "src/amio-webchat.client.js",
   "scripts": {
     "build": "webpack --env dev && webpack --env build && npm run test",
     "dev": "webpack --progress --colors --watch --env dev",
