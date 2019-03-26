@@ -1,10 +1,11 @@
 import io from 'socket.io-client'
 
-const AMIO_WEBCHAT_SERVER_URL = 'webchat.amio.io'
+const AMIO_WEBCHAT_SERVER_URL = 'https://webchat.amio.io'
 
 const DEFAULT_LOCAL_STORAGE_SESSION_NAME = 'amio_webchat_session'
 
 const SOCKET_IO_DISCONNECT = 'disconnect'
+const SOCKET_IO_ERROR = 'error'
 
 const SOCKET_MESSAGE_CLIENT = 'message_client'
 const SOCKET_MESSAGE_SERVER = 'message_server'
@@ -54,6 +55,7 @@ class AmioWebchatClient {
       const sessionName = config.localStorageSessionName || DEFAULT_LOCAL_STORAGE_SESSION_NAME
 
       const opts = {
+        secure: true,
         reconnection: true,
         reconnectionDelay: 1000,
         reconnectionDelayMax: 5000,
@@ -108,6 +110,10 @@ class AmioWebchatClient {
 
       this.socket.on(SOCKET_IO_DISCONNECT, () => {
         this.connectionStateChangedHandler(false)
+      })
+
+      this.socket.on(SOCKET_IO_ERROR, (err) => {
+        console.error('Received error from server:', err)
       })
     })
   }
