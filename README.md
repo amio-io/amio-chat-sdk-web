@@ -47,11 +47,11 @@ Minified version available [amio-webchat-sdk.min.js](lib/amio-webchat-sdk.min.js
 ## API
 
 ### connect(config)
-Connects to Amio Webchat server.
+Connects to Amio Chat server.
 
 Parameters:
 - **config** - Configuration object. Currently supported params are:
-  - **channelId** - ID of your Amio Webchat channel.
+  - **channelId** - ID of your Amio Chat channel.
   - **localStorageSessionName** - (Optional) Allows to customize the name of the Local Storage field that holds a session ID.
 
 ```js
