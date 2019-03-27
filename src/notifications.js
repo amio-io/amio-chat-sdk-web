@@ -9,7 +9,7 @@ class Notifications {
 
   send(payload) {
     return new Promise((resolve, reject) => {
-      if(!connection.getSocket()) {
+      if(!connection.isConnected()) {
         reject(ERROR_MESSAGE_NOT_CONNECTED)
         return
       }
@@ -19,7 +19,7 @@ class Notifications {
         payload: payload
       }
 
-      connection.getSocket().emit(SOCKET_NOTIFICATION_CLIENT, data, (response) => {
+      connection.emit(SOCKET_NOTIFICATION_CLIENT, data, (response) => {
         processResponse(response, resolve, reject)
       })
     })
@@ -27,12 +27,12 @@ class Notifications {
 
   sendMessagesRead() {
     return new Promise((resolve, reject) => {
-      if(!connection.getSocket()) {
+      if(!connection.isConnected()) {
         reject(ERROR_MESSAGE_NOT_CONNECTED)
         return
       }
 
-      connection.getSocket().emit(SOCKET_MESSAGES_READ, {}, (response) => {
+      connection.emit(SOCKET_MESSAGES_READ, {}, (response) => {
         processResponse(response, resolve, reject)
       })
     })

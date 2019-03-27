@@ -11,7 +11,7 @@ class Events {
     }
 
     connection.setMessageReceivedHandler(data => {
-      connection.getSocket().emit(SOCKET_MESSAGE_DELIVERED, {
+      connection.emit(SOCKET_MESSAGE_DELIVERED, {
         message_id: data.id
       }, () => {})
       this.messageReceivedHandler(data)

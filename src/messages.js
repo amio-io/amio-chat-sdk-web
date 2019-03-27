@@ -9,7 +9,7 @@ class Messages {
 
   send(content) {
     return new Promise((resolve, reject) => {
-      if(!connection.getSocket()) {
+      if(!connection.isConnected()) {
         reject(ERROR_MESSAGE_NOT_CONNECTED)
         return
       }
@@ -23,7 +23,7 @@ class Messages {
         content: content
       }
 
-      connection.getSocket().emit(SOCKET_MESSAGE_CLIENT, data, (response) => {
+      connection.emit(SOCKET_MESSAGE_CLIENT, data, (response) => {
         processResponse(response, resolve, reject)
       })
     })
@@ -51,7 +51,7 @@ class Messages {
 
   list(nextCursor, max = 10) {
     return new Promise((resolve, reject) => {
-      if(!connection.getSocket()) {
+      if(!connection.isConnected()) {
         reject(ERROR_MESSAGE_NOT_CONNECTED)
         return
       }
@@ -63,7 +63,7 @@ class Messages {
         }
       }
 
-      connection.getSocket().emit(SOCKET_LIST_MESSAGES, params, (response) => {
+      connection.emit(SOCKET_LIST_MESSAGES, params, (response) => {
         processResponse(response, resolve, reject)
       })
     })

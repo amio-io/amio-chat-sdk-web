@@ -53,7 +53,8 @@
       "try": {"after": true},
       "case": {"after": true},
       "return": {"after": true},
-      "const": {"after": true}
+      "const": {"after": true},
+      "else": {"after": true}
       }}],
     "linebreak-style": 0,
     "max-depth": 0,

@@ -102,8 +102,16 @@ class Connection {
     })
   }
 
-  getSocket() {
-    return this.socket
+  isConnected() {
+    return !!this.socket
+  }
+
+  emit(event, data, callback) {
+    if(this.socket) {
+      this.socket.emit(event, data, callback)
+    } else {
+      console.error('Invalid connection, could not send data.')
+    }
   }
 
   setMessageReceivedHandler(callback) {
