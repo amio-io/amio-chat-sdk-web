@@ -1,8 +1,8 @@
-# Amio Webchat SDK
+# Amio Chat SDK for Web
 
-Client library for Amio Webchat.
+JavaScript client library for Amio Chat.
 
-**!!! THIS PROJECT IS CURRENTLY IN ALPHA STAGE, BREAKING CHANGES MAY OCCUR AT ANY TIME**
+**!!! THIS PROJECT IS CURRENTLY IN BETA !!!**
 
 ## Installation
 
