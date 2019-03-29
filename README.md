@@ -7,7 +7,18 @@ JavaScript client library for Amio Chat.
 - [Installation](#installation)
 - [Quickstart](#quickstart)
 - [API](#api)
+  - [connect(config)](#connectconfig)
+  - [messages.send(content)](#messagessendcontent)
+  - [messages.sendText(text)](#messagessendtexttext)
+  - [messages.sendImage(url)](#messagessendimageurl)
+  - [messages.list(nextCursor, max)](#messageslistnextcursor-max)
+  - [notifications.send(payload)](#notificationssendpayload)
+  - [notifications.sendMessagesRead()](#notificationssendmessagesread)
 - [Events](#events)
+  - [events.onMessageReceived(func)](#eventsonmessagereceivedfunc)
+  - [events.onMessageEcho(func)](#eventsonmessageechofunc)
+  - [events.onNotificationReceived(func)](#eventsonnotificationreceivedfunc)
+  - [events.onConnectionStateChanged(func)](#eventsonconnectionstatechangedfunc)
 
 ## Installation
 
@@ -50,14 +61,6 @@ Minified version available [amio-webchat-sdk.min.js](lib/amio-webchat-sdk.min.js
 ```
 
 ## API
-
-- [connect(config)](#connectconfig)
-- [messages.send(content)](#messagessendcontent)
-- [messages.sendText(text)](#messagessendtexttext)
-- [messages.sendImage(url)](#messagessendimageurl)
-- [messages.list(nextCursor, max)](#messageslistnextcursor-max)
-- [notifications.send(payload)](#notificationssendpayload)
-- [notifications.sendMessagesRead()](#notificationssendmessagesread)
 
 ### connect(config)
 Connects to Amio Chat server.
@@ -205,11 +208,6 @@ amioWebchatClient.notifications.sendMessagesRead()
 ```
 
 ## Events
-
-- [events.onMessageReceived(func)](#eventsonmessagereceivedfunc)
-- [events.onMessageEcho(func)](#eventsonmessageechofunc)
-- [events.onNotificationReceived(func)](#eventsonnotificationreceivedfunc)
-- [events.onConnectionStateChanged(func)](#eventsonconnectionstatechangedfunc)
 
 ### events.onMessageReceived(func)
 Sets a callback function that will be called every time a message is received from server.
