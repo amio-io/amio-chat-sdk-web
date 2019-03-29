@@ -4,13 +4,18 @@ JavaScript client library for Amio Chat.
 
 **!!! THIS PROJECT IS CURRENTLY IN BETA !!!**
 
+- [Installation](#installation)
+- [Quickstart](#quickstart)
+- [API](#api)
+- [Events](#events)
+
 ## Installation
 
 ```bash
 npm install amio-webchat-sdk --save
 ```
 
-## How to use
+## Quickstart
 
 The library should work in all JS environments, including ES6, ES5 and (common) browsers.
 
@@ -53,10 +58,6 @@ Minified version available [amio-webchat-sdk.min.js](lib/amio-webchat-sdk.min.js
 - [messages.list(nextCursor, max)](#messageslistnextcursor-max)
 - [notifications.send(payload)](#notificationssendpayload)
 - [notifications.sendMessagesRead()](#notificationssendmessagesread)
-- [events.onMessageReceived(func)](#eventsonmessagereceivedfunc)
-- [events.onMessageEcho(func)](#eventsonmessageechofunc)
-- [events.onNotificationReceived(func)](#eventsonnotificationreceivedfunc)
-- [events.onConnectionStateChanged(func)](#eventsonconnectionstatechangedfunc)
 
 ### connect(config)
 Connects to Amio Chat server.
@@ -202,6 +203,13 @@ amioWebchatClient.notifications.sendMessagesRead()
   console.log('Error while marking messages as read:', err)
 })
 ```
+
+## Events
+
+- [events.onMessageReceived(func)](#eventsonmessagereceivedfunc)
+- [events.onMessageEcho(func)](#eventsonmessageechofunc)
+- [events.onNotificationReceived(func)](#eventsonnotificationreceivedfunc)
+- [events.onConnectionStateChanged(func)](#eventsonconnectionstatechangedfunc)
 
 ### events.onMessageReceived(func)
 Sets a callback function that will be called every time a message is received from server.
