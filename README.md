@@ -4,28 +4,50 @@ JavaScript client library for Amio Chat.
 
 **!!! THIS PROJECT IS CURRENTLY IN BETA !!!**
 
+- [Installation](#installation)
+- [Quickstart](#quickstart)
+- [API](#api)
+  - [connect(config)](#connectconfig)
+  - [messages.send(content)](#messagessendcontent)
+  - [messages.sendText(text)](#messagessendtexttext)
+  - [messages.sendImage(url)](#messagessendimageurl)
+  - [messages.list(nextCursor, max)](#messageslistnextcursor-max)
+  - [notifications.send(payload)](#notificationssendpayload)
+  - [notifications.sendMessagesRead()](#notificationssendmessagesread)
+- [Events](#events)
+  - [events.onMessageReceived(func)](#eventsonmessagereceivedfunc)
+  - [events.onMessageEcho(func)](#eventsonmessageechofunc)
+  - [events.onNotificationReceived(func)](#eventsonnotificationreceivedfunc)
+  - [events.onConnectionStateChanged(func)](#eventsonconnectionstatechangedfunc)
+
 ## Installation
 
 ```bash
 npm install amio-webchat-sdk --save
 ```
 
-## How to use
+## Quickstart
 
 The library should work in all JS environments, including ES6, ES5 and (common) browsers.
+
+You can find your Channel ID in [Amio administration](https://app.amio.io/administration/channels).
 
 #### ES5
 ```js
 var amioWebchatClient = require('amio-webchat-sdk')
 
-amioWebchatClient.connect(...)
+amioWebchatClient.connect({
+  channelId: '6495613231087502282'
+})
 ```
 
 #### ES6
 ```js
 import {amioWebchatClient} from 'amio-webchat-sdk'
 
-amioWebchatClient.connect(...)
+amioWebchatClient.connect({
+  channelId: '6495613231087502282'
+})
 ```
 
 #### Browser (script tag)
@@ -38,7 +60,9 @@ Minified version available [amio-webchat-sdk.min.js](lib/amio-webchat-sdk.min.js
   </head>
   <body>
     <script type="text/javascript">
-        amioWebchatClient.connect(...);
+        amioWebchatClient.connect({
+          channelId: '6495613231087502282'
+        });
     </script>
   </body>
 </html>
@@ -47,12 +71,11 @@ Minified version available [amio-webchat-sdk.min.js](lib/amio-webchat-sdk.min.js
 ## API
 
 ### connect(config)
-Connects to Amio Webchat server.
+Connects to Amio Chat server.
 
 Parameters:
 - **config** - Configuration object. Currently supported params are:
-  - **channelId** - ID of your Amio Webchat channel.
-  - **localStorageSessionName** - (Optional) Allows to customize the name of the Local Storage field that holds a session ID.
+  - **channelId** - ID of your Amio Chat channel.
 
 ```js
 amioWebchatClient.connect({
@@ -66,14 +89,14 @@ amioWebchatClient.connect({
 })
 ```
 
-### sendMessage(content)
+### messages.send(content)
 Sends a message.
 
 Parameters:
 - **content** - Message content. See [Amio documentation](https://docs.amio.io/v1.0/reference#messages-send-message) for details about the format.
 
 ```js
-amioWebchatClient.sendMessage({
+amioWebchatClient.messages.send({
   type: 'text',
   payload: 'Hello world'
 })
@@ -85,53 +108,28 @@ amioWebchatClient.sendMessage({
 })
 ```
 
-### sendTextMessage(text)
-Sends a text message. This is just a handy shortcut for `sendMessage({type: 'text', payload: '...'})`
+### messages.sendText(text)
+Sends a text message. This is just a handy shortcut for `messages.send({type: 'text', payload: '...'})`
 
 Parameters:
 - **text** - The content of the text message.
 
-### sendNotification(payload)
-Sends a notification. The `payload` can be any valid JSON element (string, object, number...).
-
-```js
-amioWebchatClient.sendNotification({
-  event: 'my_awesome_event'
-})
-.then(() => {
-  console.log('Notification sent successfully')
-})
-.catch(err => {
-  console.log('Error while sending notification:', err)
-})
-```
-
-### markMessagesAsRead()
-Sends an event indicating that all received messages were read by the receiver. It is up to the implementer to decide when the messages are considered read and call this function.
+### messages.sendImage(url)
+Sends an image message. This is just a handy shortcut for `messages.send({type: 'image', payload: '...'})`
 
 Parameters:
-- none
+- **url** - The URL of the image.
 
-```js
-amioWebchatClient.markMessagesAsRead()
-.then(() => {
-  console.log('Messages marked as read')
-})
-.catch(err => {
-  console.log('Error while marking messages as read:', err)
-})
-```
-
-### listMessages(max, cursor)
+### messages.list(nextCursor, max)
 Loads messages from message history. Can be called multiple times to move further back in history.
 
 Parameters:
-- **max** - Number of messages to load. Should be between 1 and 100.
-- **cursor** - Reference point (message id) indicating where to start loading messages in history. If set to `null`, messages will be read from the beginning (newest first).
+- **nextCursor** - Reference point (message id) indicating where to start loading messages in history. If set to `null`, messages will be read from the beginning (newest first).
+- **max** - Number of messages to load. Should be between 1 and 100 (default is 10).
 
 Response format:
 - **messages** - Array of messages, sorted from newest to oldest.
-- **cursor.next** - Cursor pointing to subsequent messages. Use this cursor in the next call of `listMessages()`.
+- **cursor.next** - Cursor pointing to subsequent messages. Use this cursor in the next call of `messages.list()`.
 - **cursor.has_next** - False if there are no more messages in the history, true otherwise.
 ```json
 { 
@@ -169,12 +167,12 @@ Response format:
 Example usage:
 ```js
 var nextCursor = null
-amioWebchatClient.listMessages(5, nextCursor)
+amioWebchatClient.messages.list(nextCursor, 5)
 .then(response => {
   console.log('First 5 messages loaded:', response.messages)
   nextCursor = response.cursor.next //save the cursor so we can load more messages later
 
-  amioWebchatClient.listMessages(5, nextCursor)
+  amioWebchatClient.messages.list(nextCursor, 5)
   .then(nextResponse => {
     console.log('Next 5 messages loaded:', nextResponse.messages)
     nextCursor = nextResponse.cursor.next //save the cursor so we can load more messages later
@@ -185,7 +183,40 @@ amioWebchatClient.listMessages(5, nextCursor)
 })
 ```
 
-### onMessageReceived(func)
+### notifications.send(payload)
+Sends a notification. The `payload` can be any valid JSON element (string, object, number...).
+
+```js
+amioWebchatClient.notifications.send({
+  event: 'my_awesome_event'
+})
+.then(() => {
+  console.log('Notification sent successfully')
+})
+.catch(err => {
+  console.log('Error while sending notification:', err)
+})
+```
+
+### notifications.sendMessagesRead()
+Sends an event indicating that all received messages were read by the receiver. It is up to the implementer to decide when the messages are considered read and call this function.
+
+Parameters:
+- none
+
+```js
+amioWebchatClient.notifications.sendMessagesRead()
+.then(() => {
+  console.log('Messages marked as read')
+})
+.catch(err => {
+  console.log('Error while marking messages as read:', err)
+})
+```
+
+## Events
+
+### events.onMessageReceived(func)
 Sets a callback function that will be called every time a message is received from server.
 
 Parameters:
@@ -206,12 +237,12 @@ Parameters:
 
 Example usage:
 ```js
-amioWebchatClient.onMessageReceived((data) => {
+amioWebchatClient.events.onMessageReceived((data) => {
   console.log('received message', data)
 })
 ```
 
-### onMessageEcho(func)
+### events.onMessageEcho(func)
 Sets a callback function that will be called every time a message echo is received from server. Message echo means a message was sent through a different connection associated with the same session (for example, the user has two browser tabs opened, so that's the same session but two different connections).
 
 Parameters:
@@ -232,12 +263,12 @@ Parameters:
 
 Example usage:
 ```js
-amioWebchatClient.onMessageEcho((data) => {
+amioWebchatClient.events.onMessageEcho((data) => {
   console.log('message echo', data)
 })
 ```
 
-### onNotificationReceived(func)
+### events.onNotificationReceived(func)
 Sets a callback function that will be called every time a notification is received from server.
 
 Parameters:
@@ -245,12 +276,12 @@ Parameters:
 
 Example usage:
 ```js
-amioWebchatClient.onNotificationReceived((payload) => {
+amioWebchatClient.events.onNotificationReceived((payload) => {
   console.log('received notification', payload)
 })
 ```
 
-### onConnectionStateChanged(func)
+### events.onConnectionStateChanged(func)
 Sets a callback function that will be called when connection state changes from offline to online or vice versa.
 
 Parameters:
@@ -258,7 +289,7 @@ Parameters:
 
 Example usage:
 ```js
-amioWebchatClient.onConnectionStateChanged((online) => {
+amioWebchatClient.events.onConnectionStateChanged((online) => {
   if(online) {
     console.log('We are online :)')
   } else {

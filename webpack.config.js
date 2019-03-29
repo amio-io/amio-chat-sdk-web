@@ -19,7 +19,7 @@ if (env === 'build') {
 
 const config = {
   mode: mode,
-  entry: __dirname + '/src/index.js',
+  entry: __dirname + '/src/amio-webchat.client.js',
   devtool: 'source-map',
   output: {
     path: __dirname + '/lib',
