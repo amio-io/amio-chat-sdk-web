@@ -40,7 +40,7 @@ class Connection {
 
       // for dev purposes: set config._amioWebchatServerUrl to use a different server
       const serverUrl = config._amioWebchatServerUrl || AMIO_WEBCHAT_SERVER_URL
-      const sessionName = config.localStorageSessionName || DEFAULT_LOCAL_STORAGE_SESSION_NAME
+      const sessionName = DEFAULT_LOCAL_STORAGE_SESSION_NAME
 
       const opts = {
         secure: true,

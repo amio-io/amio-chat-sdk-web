@@ -30,18 +30,24 @@ npm install amio-webchat-sdk --save
 
 The library should work in all JS environments, including ES6, ES5 and (common) browsers.
 
+You can find your Channel ID in [Amio administration](https://app.amio.io/administration/channels).
+
 #### ES5
 ```js
 var amioWebchatClient = require('amio-webchat-sdk')
 
-amioWebchatClient.connect(...)
+amioWebchatClient.connect({
+  channelId: '6495613231087502282'
+})
 ```
 
 #### ES6
 ```js
 import {amioWebchatClient} from 'amio-webchat-sdk'
 
-amioWebchatClient.connect(...)
+amioWebchatClient.connect({
+  channelId: '6495613231087502282'
+})
 ```
 
 #### Browser (script tag)
@@ -54,7 +60,9 @@ Minified version available [amio-webchat-sdk.min.js](lib/amio-webchat-sdk.min.js
   </head>
   <body>
     <script type="text/javascript">
-        amioWebchatClient.connect(...);
+        amioWebchatClient.connect({
+          channelId: '6495613231087502282'
+        });
     </script>
   </body>
 </html>
@@ -68,7 +76,6 @@ Connects to Amio Chat server.
 Parameters:
 - **config** - Configuration object. Currently supported params are:
   - **channelId** - ID of your Amio Chat channel.
-  - **localStorageSessionName** - (Optional) Allows to customize the name of the Local Storage field that holds a session ID.
 
 ```js
 amioWebchatClient.connect({
