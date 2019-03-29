@@ -23,7 +23,7 @@ JavaScript client library for Amio Chat.
 ## Installation
 
 ```bash
-npm install amio-webchat-sdk --save
+npm install amio-chat-sdk-web --save
 ```
 
 ## Quickstart
@@ -34,33 +34,33 @@ You can find your Channel ID in [Amio administration](https://app.amio.io/admini
 
 #### ES5
 ```js
-var amioWebchatClient = require('amio-webchat-sdk')
+var amioChat = require('amio-chat-sdk-web')
 
-amioWebchatClient.connect({
+amioChat.connect({
   channelId: '6495613231087502282'
 })
 ```
 
 #### ES6
 ```js
-import {amioWebchatClient} from 'amio-webchat-sdk'
+import {amioChat} from 'amio-chat-sdk-web'
 
-amioWebchatClient.connect({
+amioChat.connect({
   channelId: '6495613231087502282'
 })
 ```
 
 #### Browser (script tag)
-Minified version available [amio-webchat-sdk.min.js](lib/amio-webchat-sdk.min.js) (will be available in CDN in the future).
+Minified version available [amio-chat-sdk-web.min.js](lib/amio-chat-sdk-web.min.js) (will be available in CDN in the future).
 
 ```html
 <html>
   <head>
-    <script src="path/to/amio-webchat-sdk.min.js" type="text/javascript"></script>
+    <script src="path/to/amio-chat-sdk-web.min.js" type="text/javascript"></script>
   </head>
   <body>
     <script type="text/javascript">
-        amioWebchatClient.connect({
+        amioChat.connect({
           channelId: '6495613231087502282'
         });
     </script>
@@ -78,7 +78,7 @@ Parameters:
   - **channelId** - ID of your Amio Chat channel.
 
 ```js
-amioWebchatClient.connect({
+amioChat.connect({
   channelId: '6495613231087502282'
 })
 .then(() => {
@@ -96,7 +96,7 @@ Parameters:
 - **content** - Message content. See [Amio documentation](https://docs.amio.io/v1.0/reference#messages-send-message) for details about the format.
 
 ```js
-amioWebchatClient.messages.send({
+amioChat.messages.send({
   type: 'text',
   payload: 'Hello world'
 })
@@ -167,12 +167,12 @@ Response format:
 Example usage:
 ```js
 var nextCursor = null
-amioWebchatClient.messages.list(nextCursor, 5)
+amioChat.messages.list(nextCursor, 5)
 .then(response => {
   console.log('First 5 messages loaded:', response.messages)
   nextCursor = response.cursor.next //save the cursor so we can load more messages later
 
-  amioWebchatClient.messages.list(nextCursor, 5)
+  amioChat.messages.list(nextCursor, 5)
   .then(nextResponse => {
     console.log('Next 5 messages loaded:', nextResponse.messages)
     nextCursor = nextResponse.cursor.next //save the cursor so we can load more messages later
@@ -187,7 +187,7 @@ amioWebchatClient.messages.list(nextCursor, 5)
 Sends a notification. The `payload` can be any valid JSON element (string, object, number...).
 
 ```js
-amioWebchatClient.notifications.send({
+amioChat.notifications.send({
   event: 'my_awesome_event'
 })
 .then(() => {
@@ -205,7 +205,7 @@ Parameters:
 - none
 
 ```js
-amioWebchatClient.notifications.sendMessagesRead()
+amioChat.notifications.sendMessagesRead()
 .then(() => {
   console.log('Messages marked as read')
 })
@@ -237,7 +237,7 @@ Parameters:
 
 Example usage:
 ```js
-amioWebchatClient.events.onMessageReceived((data) => {
+amioChat.events.onMessageReceived((data) => {
   console.log('received message', data)
 })
 ```
@@ -263,7 +263,7 @@ Parameters:
 
 Example usage:
 ```js
-amioWebchatClient.events.onMessageEcho((data) => {
+amioChat.events.onMessageEcho((data) => {
   console.log('message echo', data)
 })
 ```
@@ -276,7 +276,7 @@ Parameters:
 
 Example usage:
 ```js
-amioWebchatClient.events.onNotificationReceived((payload) => {
+amioChat.events.onNotificationReceived((payload) => {
   console.log('received notification', payload)
 })
 ```
@@ -289,7 +289,7 @@ Parameters:
 
 Example usage:
 ```js
-amioWebchatClient.events.onConnectionStateChanged((online) => {
+amioChat.events.onConnectionStateChanged((online) => {
   if(online) {
     console.log('We are online :)')
   } else {

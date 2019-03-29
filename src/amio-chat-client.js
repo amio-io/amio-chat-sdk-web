@@ -3,7 +3,7 @@ import events from './events'
 import messages from './messages'
 import notifications from './notifications'
 
-class AmioWebchatClient {
+class AmioChatClient {
 
   constructor() {
     this.events = events
@@ -17,5 +17,5 @@ class AmioWebchatClient {
 
 }
 
-const instance = new AmioWebchatClient()
-export { instance as AmioWebchatClient }
+const instance = new AmioChatClient()
+export { instance as amioChat }

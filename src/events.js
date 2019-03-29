@@ -7,7 +7,7 @@ class Events {
 
   constructor() {
     this.messageReceivedHandler = () => {
-      console.error('MessageReceivedHandler is not set, use onMessageReceived() to set it.')
+      console.error('MessageReceivedHandler is not set, use events.onMessageReceived() to set it.')
     }
 
     connection.setMessageReceivedHandler(data => {
@@ -18,7 +18,7 @@ class Events {
     })
 
     connection.setMessageEchoHandler(() => {
-      console.error('MessageEchoHandler is not set, use onMessageEcho() to set it.')
+      console.error('MessageEchoHandler is not set, use events.onMessageEcho() to set it.')
     })
   }
 

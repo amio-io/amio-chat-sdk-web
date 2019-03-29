@@ -1,21 +1,21 @@
 {
-  "name": "amio-webchat-sdk",
+  "name": "amio-chat-sdk-web",
   "version": "1.0.0",
-  "description": "Amio webchat JavaScript SDK for custom webchat implementation. https://amio.io",
-  "main": "lib/amio-webchat-sdk.js",
-  "module": "src/amio-webchat.client.js",
+  "description": "Amio Chat JavaScript SDK for custom webchat implementation. https://amio.io",
+  "main": "lib/amio-chat-sdk-web.js",
+  "module": "src/amio-chat-client.js",
   "scripts": {
     "build": "webpack --env dev && webpack --env build && npm run test",
     "dev": "webpack --progress --colors --watch --env dev",
     "test": "mocha --require babel-register --colors ./test/*.spec.js",
     "test:watch": "mocha --require babel-register --colors -w ./test/*.spec.js",
     "test:cover": "cross-env NODE_ENV=test nyc mocha --require babel-register --colors test/*.js",
-    "repl": "node -i -e \"$(< ./lib/amio-webchat-sdk.js)\"",
+    "repl": "node -i -e \"$(< ./lib/amio-chat-sdk-web.js)\"",
     "can-publish-nix": "npm info $npm_package_name version | npm-version-bump-checker"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/amio-io/amio-webchat-sdk"
+    "url": "https://github.com/amio-io/amio-chat-sdk-web"
   },
   "keywords": [
     "amio",
@@ -26,9 +26,9 @@
   "author": "Amio.io",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/amio-io/amio-webchat-sdk/issues"
+    "url": "https://github.com/amio-io/amio-chat-sdk-web/issues"
   },
-  "homepage": "https://github.com/amio-io/amio-webchat-sdk",
+  "homepage": "https://github.com/amio-io/amio-chat-sdk-web",
   "dependencies": {
     "socket.io-client": "2.2.0"
   },
