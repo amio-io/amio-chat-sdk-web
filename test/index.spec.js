@@ -1,7 +1,7 @@
 /* global describe, it, before */
 
 import chai from 'chai'
-import AmioWebchatClient from '../lib/amio-webchat-sdk'
+import amioChat from '../lib/amio-chat-sdk-web'
 
 chai.expect()
 
@@ -11,7 +11,7 @@ let lib
 
 describe('Test', () => {
   before(() => {
-    lib = AmioWebchatClient
+    lib = amioChat
   })
   describe('Basic test', () => {
     it('should be defined', () => {

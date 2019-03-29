@@ -1,7 +1,7 @@
 version: 2.1
 
 defaults: &defaults
-  working_directory: ~/amio-webchat-sdk
+  working_directory: ~/amio-chat-sdk-web
   docker:
     - image: circleci/node:8.9.1
 
@@ -49,7 +49,7 @@ jobs:
           command: test `ls -l lib/ | wc -l` -eq 5
 
       - persist_to_workspace:
-          root: ~/amio-webchat-sdk
+          root: ~/amio-chat-sdk-web
           paths: .
 
   publish_prod:
@@ -57,13 +57,13 @@ jobs:
 
     steps:
       - attach_workspace:
-          at: ~/amio-webchat-sdk
+          at: ~/amio-chat-sdk-web
       - run:
           name: Check version bump
           command: npm run can-publish-nix
       - run:
           name: Authenticate with registry
-          command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/amio-webchat-sdk/.npmrc
+          command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/amio-chat-sdk-web/.npmrc
       - run:
           name: Publish package
           command: npm publish

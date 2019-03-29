@@ -19,17 +19,17 @@ if (env === 'build') {
 
 const config = {
   mode: mode,
-  entry: __dirname + '/src/amio-webchat.client.js',
+  entry: __dirname + '/src/amio-chat-client.js',
   devtool: 'source-map',
   output: {
     path: __dirname + '/lib',
     filename: outputFile,
     library: {
-      root: 'AmioWebchatClient',
+      root: 'amioChat',
       amd: libraryName,
       commonjs: libraryName
     },
-    libraryExport: 'AmioWebchatClient',
+    libraryExport: 'amioChat',
     libraryTarget: 'umd',
     umdNamedDefine: true,
     globalObject: "typeof self !== 'undefined' ? self : this"
