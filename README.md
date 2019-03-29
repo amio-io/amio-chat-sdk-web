@@ -46,6 +46,18 @@ Minified version available [amio-webchat-sdk.min.js](lib/amio-webchat-sdk.min.js
 
 ## API
 
+- [connect(config)](#connectconfig)
+- [messages.send(content)](#messagessendcontent)
+- [messages.sendText(text)](#messagessendtexttext)
+- [messages.sendImage(url)](#messagessendimageurl)
+- [messages.list(nextCursor, max)](#messageslistnextcursor-max)
+- [notifications.send(payload)](#notificationssendpayload)
+- [notifications.sendMessagesRead()](#notificationssendmessagesread)
+- [events.onMessageReceived(func)](#eventsonmessagereceivedfunc)
+- [events.onMessageEcho(func)](#eventsonmessageechofunc)
+- [events.onNotificationReceived(func)](#eventsonnotificationreceivedfunc)
+- [events.onConnectionStateChanged(func)](#eventsonconnectionstatechangedfunc)
+
 ### connect(config)
 Connects to Amio Chat server.
 
@@ -102,7 +114,7 @@ Loads messages from message history. Can be called multiple times to move furthe
 
 Parameters:
 - **nextCursor** - Reference point (message id) indicating where to start loading messages in history. If set to `null`, messages will be read from the beginning (newest first).
-- **max** - Number of messages to load. Should be between 1 and 100.
+- **max** - Number of messages to load. Should be between 1 and 100 (default is 10).
 
 Response format:
 - **messages** - Array of messages, sorted from newest to oldest.

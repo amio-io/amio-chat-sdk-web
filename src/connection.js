@@ -9,7 +9,8 @@ import {
   SOCKET_MESSAGE_SERVER,
   SOCKET_NOTIFICATION_SERVER,
   SOCKET_MESSAGE_ECHO,
-  ERROR_CODE_CHANNEL_ID_CHANGED
+  ERROR_CODE_CHANNEL_ID_CHANGED,
+  ERROR_MESSAGE_NOT_CONNECTED
 } from './constants'
 
 class Connection {
@@ -72,12 +73,13 @@ class Connection {
         if(data.error_code === ERROR_CODE_CHANNEL_ID_CHANGED) {
           console.warn('Session invalidated by the server. New session will be created automatically.')
           this.storage.removeItem(sessionName)
+          this.socket.off()
           this.connect(config)
             .then(resolve)
             .catch(reject)
           return
         }
-        reject('Connection rejected from server. Error:', data)
+        reject(`Connection rejected from server. Error: ${JSON.stringify(data)}`)
       })
 
       this.socket.on(SOCKET_IO_DISCONNECT, () => {
@@ -106,12 +108,21 @@ class Connection {
     return !!this.socket
   }
 
-  emit(event, data, callback) {
-    if(this.socket) {
-      this.socket.emit(event, data, callback)
-    } else {
-      console.error('Invalid connection, could not send data.')
-    }
+  emit(event, data) {
+    return new Promise((resolve, reject) => {
+      if(!this.isConnected()) {
+        reject(ERROR_MESSAGE_NOT_CONNECTED)
+        return
+      }
+
+      this.socket.emit(event, data, (response) => {
+        if(response.error_code) {
+          reject(response)
+          return
+        }
+        resolve(response)
+      })
+    })
   }
 
   setMessageReceivedHandler(callback) {

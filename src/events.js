@@ -13,7 +13,7 @@ class Events {
     connection.setMessageReceivedHandler(data => {
       connection.emit(SOCKET_MESSAGE_DELIVERED, {
         message_id: data.id
-      }, () => {})
+      })
       this.messageReceivedHandler(data)
     })
 
