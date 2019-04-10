@@ -1,7 +1,7 @@
 import io from 'socket.io-client'
 import {
   AMIO_CHAT_SERVER_URL,
-  DEFAULT_LOCAL_STORAGE_SESSION_NAME,
+  STORAGE_SESSION_NAME,
   SOCKET_CONNECTION_ACCEPTED,
   SOCKET_CONNECTION_REJECTED,
   SOCKET_IO_DISCONNECT,
@@ -34,13 +34,13 @@ class Connection {
   connect(config) {
     return new Promise((resolve, reject) => {
       if(!config || !config.channelId) {
-        reject('Could not connect: config.channelId is invalid.')
+        reject('Could not connect: config.channelId is missing.')
         return
       }
 
       // for dev purposes: set config._amioChatServerUrl to use a different server
       const serverUrl = config._amioChatServerUrl || AMIO_CHAT_SERVER_URL
-      const sessionName = DEFAULT_LOCAL_STORAGE_SESSION_NAME
+      const sessionName = STORAGE_SESSION_NAME
 
       const opts = {
         secure: true,
