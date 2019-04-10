@@ -301,11 +301,12 @@ amioChat.events.onConnectionStateChanged((online) => {
 ## Tests
 
 ### Execute all tests
-To run the test suite execute `npm run test`.
+1. Build the code - `npm run build`
+2. Run the test suite - `npm run test`.
 
 ### Execute single test
-To run a single test, you have to include `mocha --require babel-register --colors`. 
-
+1. Build the code - `npm run build`
+2. To run a single test, you have to include `mocha --require babel-register --colors`. 
 
 ## License
 
