@@ -39,17 +39,11 @@ class Connection {
 
   connect(config) {
     return new Promise((resolve, reject) => {
-      if(!config || !config.channelId) {
-        reject('Could not connect: config.channelId is missing.')
+      const err = validateConfig(config)
+      if(err) {
+        reject(err)
         return
       }
-
-      if(!isString(config.channelId)) {
-        reject(`Could not connect: config.channelId must be a string. The provided value is: ${JSON.stringify(config.channelId)}`)
-        return
-      }
-
-      // TODO channelId must be string
 
       // for dev purposes: set config._amioChatServerUrl to use a different server
       const serverUrl = config._amioChatServerUrl || AMIO_CHAT_SERVER_URL
@@ -155,6 +149,18 @@ class Connection {
 
 function isString(value) {
   return Object.prototype.toString.call(value) === '[object String]'
+}
+
+function validateConfig(config) {
+  if(!config || !config.channelId) {
+    return 'Could not connect: config.channelId is missing.'
+  }
+
+  if(!isString(config.channelId)) {
+    return `Could not connect: config.channelId must be a string. The provided value is: ${JSON.stringify(config.channelId)}`
+  }
+
+  return null
 }
 
 export default new Connection()
