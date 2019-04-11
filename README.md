@@ -300,6 +300,12 @@ amioChat.events.onConnectionStateChanged((online) => {
 
 ## Tests
 
+During development, comment the **lib** import and replace it with **src** one:
+```js
+// import amioChat from '../lib/amio-chat-sdk-web'
+import {amioChat} from '../src/amio-chat-client'
+```
+
 ### Execute all tests
 1. Build the code - `npm run build`
 2. Run the test suite - `npm run test`.
