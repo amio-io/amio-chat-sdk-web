@@ -1,16 +1,16 @@
 import io from 'socket.io-client'
 import {
   AMIO_CHAT_SERVER_URL,
-  STORAGE_SESSION_NAME,
+  ERROR_CODE_CHANNEL_ID_CHANGED,
+  ERROR_MESSAGE_NOT_CONNECTED,
   SOCKET_CONNECTION_ACCEPTED,
   SOCKET_CONNECTION_REJECTED,
   SOCKET_IO_DISCONNECT,
   SOCKET_IO_ERROR,
+  SOCKET_MESSAGE_ECHO,
   SOCKET_MESSAGE_SERVER,
   SOCKET_NOTIFICATION_SERVER,
-  SOCKET_MESSAGE_ECHO,
-  ERROR_CODE_CHANNEL_ID_CHANGED,
-  ERROR_MESSAGE_NOT_CONNECTED
+  STORAGE_SESSION_NAME
 } from './constants'
 
 class Connection {
@@ -20,15 +20,21 @@ class Connection {
     if(!this.storage) {
       // for tests
       this.storage = {}
-      this.storage.getItem = () => {}
-      this.storage.setItem = () => {}
+      this.storage.getItem = () => {
+      }
+      this.storage.setItem = () => {
+      }
     }
     this.sessionId = null
 
-    this.messageReceivedHandler = () => {}
-    this.messageEchoHandler = () => {}
-    this.notificationReceivedHandler = () => {}
-    this.connectionStateChangedHandler = () => {}
+    this.messageReceivedHandler = () => {
+    }
+    this.messageEchoHandler = () => {
+    }
+    this.notificationReceivedHandler = () => {
+    }
+    this.connectionStateChangedHandler = () => {
+    }
   }
 
   connect(config) {
@@ -37,6 +43,13 @@ class Connection {
         reject('Could not connect: config.channelId is missing.')
         return
       }
+
+      if(!isString(config.channelId)) {
+        reject(`Could not connect: config.channelId must be a string. The provided value is: ${JSON.stringify(config.channelId)}`)
+        return
+      }
+
+      // TODO channelId must be string
 
       // for dev purposes: set config._amioChatServerUrl to use a different server
       const serverUrl = config._amioChatServerUrl || AMIO_CHAT_SERVER_URL
@@ -61,9 +74,7 @@ class Connection {
       this.socket = io(serverUrl, opts)
 
       this.socket.on(SOCKET_CONNECTION_ACCEPTED, data => {
-        const sessionId = data.session_id
-
-        this.sessionId = sessionId
+        this.sessionId = data.session_id
         this.storage.setItem(sessionName, data.session_id)
         this.connectionStateChangedHandler(true)
         resolve()
@@ -140,6 +151,10 @@ class Connection {
   setConnectionStateChangedHandler(callback) {
     this.connectionStateChangedHandler = callback
   }
+}
+
+function isString(value) {
+  return Object.prototype.toString.call(value) === '[object String]'
 }
 
 export default new Connection()
