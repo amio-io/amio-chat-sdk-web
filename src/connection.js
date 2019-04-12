@@ -74,8 +74,8 @@ class Connection {
         resolve()
       })
 
-      this.socket.on(SOCKET_CONNECTION_REJECTED, data => {
-        if(data.error_code === ERROR_CODE_CHANNEL_ID_CHANGED) {
+      this.socket.on(SOCKET_CONNECTION_REJECTED, error => {
+        if(error.error_code === ERROR_CODE_CHANNEL_ID_CHANGED) {
           console.warn('Session invalidated by the server. New session will be created automatically.')
           this.storage.removeItem(sessionName)
           this.socket.off()
@@ -84,7 +84,7 @@ class Connection {
             .catch(reject)
           return
         }
-        reject(`Connection rejected from server. Error: ${JSON.stringify(data)}`)
+        reject(`Connection rejected from server. Error: ${JSON.stringify(error)}`)
       })
 
       this.socket.on(SOCKET_IO_DISCONNECT, () => {
