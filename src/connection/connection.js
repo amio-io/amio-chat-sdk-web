@@ -1,4 +1,5 @@
 import io from 'socket.io-client'
+import session from './session'
 import {
   AMIO_CHAT_SERVER_URL,
   ERROR_CODE_CHANNEL_ID_CHANGED,
@@ -9,24 +10,12 @@ import {
   SOCKET_IO_ERROR,
   SOCKET_MESSAGE_ECHO,
   SOCKET_MESSAGE_SERVER,
-  SOCKET_NOTIFICATION_SERVER,
-  STORAGE_SESSION_NAME
-} from './constants'
+  SOCKET_NOTIFICATION_SERVER
+} from '../constants'
 
 class Connection {
 
   constructor() {
-    this.storage = window.localStorage
-    if(!this.storage) {
-      // for tests
-      this.storage = {}
-      this.storage.getItem = () => {
-      }
-      this.storage.setItem = () => {
-      }
-    }
-    this.sessionId = null
-
     this.messageReceivedHandler = () => {
     }
     this.messageEchoHandler = () => {
@@ -47,7 +36,6 @@ class Connection {
 
       // for dev purposes: set config._amioChatServerUrl to use a different server
       const serverUrl = config._amioChatServerUrl || AMIO_CHAT_SERVER_URL
-      const sessionName = STORAGE_SESSION_NAME
 
       const opts = {
         secure: true,
@@ -61,15 +49,14 @@ class Connection {
         }
       }
 
-      this.sessionId = this.storage.getItem(sessionName)
-      if(this.sessionId) {
-        opts.query.session_id = this.sessionId
+      const sessionId = session.getId()
+      if(sessionId) {
+        opts.query.session_id = sessionId
       }
       this.socket = io(serverUrl, opts)
 
       this.socket.on(SOCKET_CONNECTION_ACCEPTED, data => {
-        this.sessionId = data.session_id
-        this.storage.setItem(sessionName, data.session_id)
+        session.setId(data.session_id)
         this.connectionStateChangedHandler(true)
         resolve()
       })
@@ -77,7 +64,7 @@ class Connection {
       this.socket.on(SOCKET_CONNECTION_REJECTED, error => {
         if(error.error_code === ERROR_CODE_CHANNEL_ID_CHANGED) {
           console.warn('Session invalidated by the server. New session will be created automatically.')
-          this.storage.removeItem(sessionName)
+          session.clear()
           this.socket.off()
           this.connect(config)
             .then(resolve)

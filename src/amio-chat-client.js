@@ -1,4 +1,5 @@
-import connection from './connection'
+import connection from './connection/connection'
+import session from './connection/session'
 import events from './events'
 import messages from './messages'
 import notifications from './notifications'
@@ -15,7 +16,11 @@ class AmioChatClient {
     return connection.connect(config)
   }
 
+  getSessionId() {
+    return session.getId()
+  }
+
 }
 
 const instance = new AmioChatClient()
-export { instance as amioChat }
+export {instance as amioChat}
