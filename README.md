@@ -300,10 +300,19 @@ amioChat.events.onConnectionStateChanged((online) => {
 
 ## Tests
 
+### Tips - quicker testing 
 During development, comment the **lib** import and replace it with **src** one:
 ```js
 // import amioChat from '../lib/amio-chat-sdk-web'
 import {amioChat} from '../src/amio-chat-client'
+```
+
+### Tips - promises
+Since we can't use `async/await`, always pay attention that every promised base test has this form:
+```js
+it('test', () => {
+  return createPromise() // mocha handles it
+})
 ```
 
 ### Execute all tests

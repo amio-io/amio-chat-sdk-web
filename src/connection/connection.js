@@ -16,6 +16,8 @@ import {
 class Connection {
 
   constructor() {
+    this.online = false
+
     this.messageReceivedHandler = () => {
     }
     this.messageEchoHandler = () => {
@@ -57,7 +59,10 @@ class Connection {
 
       this.socket.on(SOCKET_CONNECTION_ACCEPTED, data => {
         session.setId(data.session_id)
-        this.connectionStateChangedHandler(true)
+
+        this.online = true
+        this.connectionStateChangedHandler(this.online)
+
         resolve()
       })
 
@@ -75,7 +80,8 @@ class Connection {
       })
 
       this.socket.on(SOCKET_IO_DISCONNECT, () => {
-        this.connectionStateChangedHandler(false)
+        this.online = false
+        this.connectionStateChangedHandler(this.online)
       })
 
       this.socket.on(SOCKET_IO_ERROR, (err) => {
@@ -96,13 +102,9 @@ class Connection {
     })
   }
 
-  isConnected() {
-    return !!this.socket
-  }
-
   emit(event, data) {
     return new Promise((resolve, reject) => {
-      if(!this.isConnected()) {
+      if(!this.socket) {
         reject(ERROR_MESSAGE_NOT_CONNECTED)
         return
       }

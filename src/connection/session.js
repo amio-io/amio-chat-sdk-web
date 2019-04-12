@@ -5,14 +5,10 @@ import {
 class Session {
 
   constructor() {
-    this.storage = window.localStorage
-    if(!this.storage) {
-      // for tests
-      this.storage = {}
-      this.storage.getItem = () => {
-      }
-      this.storage.setItem = () => {
-      }
+    if(window.localStorage) {
+      this.storage = window.localStorage
+    } else {
+      this.storage = new TestStorage()
     }
   }
 
@@ -26,6 +22,25 @@ class Session {
 
   clear() {
     return this.storage.removeItem(STORAGE_SESSION_NAME)
+  }
+}
+
+class TestStorage {
+
+  constructor() {
+    this.storage = {}
+  }
+
+  getItem(key) {
+    return this.storage[key]
+  }
+
+  setItem(key, value) {
+    this.storage[key] = value
+  }
+
+  removeItem(key) {
+    delete this.storage[key]
   }
 }
 
