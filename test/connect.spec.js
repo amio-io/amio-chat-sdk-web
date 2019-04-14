@@ -12,8 +12,9 @@ const CHANNEL_ID = process.env.TEST_AMIO_CHANNEL_ID
 const CHANNEL_ID2 = process.env.TEST_AMIO_CHANNEL_ID2
 
 describe('connect()', () => {
-  before(() => {
 
+  after(() => {
+    amioChat.disconnect()
   })
 
   describe('ERR - wrong configuration - channelId', () => {

@@ -17,6 +17,11 @@ class AmioChatClient {
   }
 
   // TODO to docs
+  disconnect() {
+    connection.disconnect()
+  }
+
+  // TODO to docs
   isConnected() {
     return connection.online
   }

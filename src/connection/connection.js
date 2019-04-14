@@ -28,6 +28,12 @@ class Connection {
     }
   }
 
+  disconnect() {
+    if(this.socket) {
+      this.socket.disconnect()
+    }
+  }
+
   connect(config) {
     return new Promise((resolve, reject) => {
       const err = validateConfig(config)
@@ -55,6 +61,8 @@ class Connection {
       if(sessionId) {
         opts.query.session_id = sessionId
       }
+
+      this.disconnect()
       this.socket = io(serverUrl, opts)
 
       this.socket.on(SOCKET_CONNECTION_ACCEPTED, data => {
