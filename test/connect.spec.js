@@ -1,8 +1,10 @@
-/* global describe, it, before */
+// this is a workaround for CORS issue. 'jsdom-global/register' must be the very 1st line.
+// "jsdom-global": "zatziky/jsdom-global#default-url-in-register" must be used.
+import 'jsdom-global/register'
 
 import chai from 'chai'
-// import amioChat from '../lib/amio-chat-sdk-web'
-import {amioChat} from '../src/amio-chat-client'
+import amioChat from '../lib/amio-chat-sdk-web'
+// import {amioChat} from '../src/amio-chat-client'
 
 chai.expect()
 const expect = chai.expect
@@ -11,6 +13,7 @@ const CHANNEL_ID2 = process.env.TEST_AMIO_CHANNEL_ID2
 
 describe('connect()', () => {
   before(() => {
+
   })
 
   describe('ERR - wrong configuration - channelId', () => {
