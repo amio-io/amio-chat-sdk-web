@@ -4,7 +4,6 @@ import 'jsdom-global/register'
 
 import chai from 'chai'
 import amioChat from '../lib/amio-chat-sdk-web'
-// import {amioChat} from '../src/amio-chat-client'
 
 chai.expect()
 const expect = chai.expect
