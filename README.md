@@ -8,6 +8,9 @@ JavaScript client library for Amio Chat.
 - [Quickstart](#quickstart)
 - [API](#api)
   - [connect(config)](#connectconfig)
+  - [disconnect()](#disconnect)
+  - [isConnected()](#isconnected)
+  - [getSessionId()](#getsessionid)
   - [messages.send(content)](#messagessendcontent)
   - [messages.sendText(text)](#messagessendtexttext)
   - [messages.sendImage(url)](#messagessendimageurl)
@@ -88,6 +91,15 @@ amioChat.connect({
   console.log('Connection error:', err)
 })
 ```
+
+### disconnect()
+Disconnects from Amio Chat server.
+
+### isConnected()
+Returns `true` if the client is successfully connected to Amio Chat server.
+
+### getSessionId()
+It returns session ID of the client connected to Amio Chat server. It return `null` if the connection was not successful. 
 
 ### messages.send(content)
 Sends a message.

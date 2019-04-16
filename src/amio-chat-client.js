@@ -16,17 +16,14 @@ class AmioChatClient {
     return connection.connect(config)
   }
 
-  // TODO to docs
   disconnect() {
     connection.disconnect()
   }
 
-  // TODO to docs
   isConnected() {
     return connection.online
   }
 
-  // TODO to docs
   getSessionId() {
     return session.getId()
   }
