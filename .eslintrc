@@ -12,6 +12,7 @@
     "unescape": false,
     "window": false,
     "describe": true,
+    "after": true,
     "before": true,
     "it": true,
     "expect": true,
@@ -21,7 +22,7 @@
   "parser": "babel-eslint",
 
   "plugins": [
-    
+
   ],
 
   "rules": {
@@ -47,7 +48,7 @@
     "indent": [2, 2, { "SwitchCase": 1 }],
     "key-spacing": [2, { "beforeColon": false, "afterColon": true }],
     "keyword-spacing": [2, {"before": true, "after": false, "overrides": {
-      "from": {"after": true}, 
+      "from": {"after": true},
       "export": {"after": true},
       "import": {"after": true},
       "try": {"after": true},

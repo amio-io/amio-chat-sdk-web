@@ -34,11 +34,11 @@ jobs:
       - npm_install:
           cache_version: 1
       - run:
-          name: ls -la
+          name: List files
           command: ls -la
-      - run:
-          name: Run build & tests
-          command: npm run build
+
+      - run: npm run build
+      - run: npm run test
 
       - run:
           name: Check if the build produced the same version of lib/* files

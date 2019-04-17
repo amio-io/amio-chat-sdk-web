@@ -1,46 +1,49 @@
 import io from 'socket.io-client'
+import session from './session'
 import {
   AMIO_CHAT_SERVER_URL,
-  DEFAULT_LOCAL_STORAGE_SESSION_NAME,
+  ERROR_CODE_CHANNEL_ID_CHANGED,
+  ERROR_MESSAGE_NOT_CONNECTED,
   SOCKET_CONNECTION_ACCEPTED,
   SOCKET_CONNECTION_REJECTED,
   SOCKET_IO_DISCONNECT,
   SOCKET_IO_ERROR,
-  SOCKET_MESSAGE_SERVER,
-  SOCKET_NOTIFICATION_SERVER,
   SOCKET_MESSAGE_ECHO,
-  ERROR_CODE_CHANNEL_ID_CHANGED,
-  ERROR_MESSAGE_NOT_CONNECTED
-} from './constants'
+  SOCKET_MESSAGE_SERVER,
+  SOCKET_NOTIFICATION_SERVER
+} from '../constants'
 
 class Connection {
 
   constructor() {
-    this.storage = window.localStorage
-    if(!this.storage) {
-      // for tests
-      this.storage = {}
-      this.storage.getItem = () => {}
-      this.storage.setItem = () => {}
-    }
-    this.sessionId = null
+    this.online = false
 
-    this.messageReceivedHandler = () => {}
-    this.messageEchoHandler = () => {}
-    this.notificationReceivedHandler = () => {}
-    this.connectionStateChangedHandler = () => {}
+    this.messageReceivedHandler = () => {
+    }
+    this.messageEchoHandler = () => {
+    }
+    this.notificationReceivedHandler = () => {
+    }
+    this.connectionStateChangedHandler = () => {
+    }
+  }
+
+  disconnect() {
+    if(this.socket) {
+      this.socket.disconnect()
+    }
   }
 
   connect(config) {
     return new Promise((resolve, reject) => {
-      if(!config || !config.channelId) {
-        reject('Could not connect: config.channelId is invalid.')
+      const err = validateConfig(config)
+      if(err) {
+        reject(err)
         return
       }
 
       // for dev purposes: set config._amioChatServerUrl to use a different server
       const serverUrl = config._amioChatServerUrl || AMIO_CHAT_SERVER_URL
-      const sessionName = DEFAULT_LOCAL_STORAGE_SESSION_NAME
 
       const opts = {
         secure: true,
@@ -54,36 +57,39 @@ class Connection {
         }
       }
 
-      this.sessionId = this.storage.getItem(sessionName)
-      if(this.sessionId) {
-        opts.query.session_id = this.sessionId
+      const sessionId = session.getId()
+      if(sessionId) {
+        opts.query.session_id = sessionId
       }
+
+      this.disconnect()
       this.socket = io(serverUrl, opts)
 
       this.socket.on(SOCKET_CONNECTION_ACCEPTED, data => {
-        const sessionId = data.session_id
+        session.setId(data.session_id)
 
-        this.sessionId = sessionId
-        this.storage.setItem(sessionName, data.session_id)
-        this.connectionStateChangedHandler(true)
+        this.online = true
+        this.connectionStateChangedHandler(this.online)
+
         resolve()
       })
 
-      this.socket.on(SOCKET_CONNECTION_REJECTED, data => {
-        if(data.error_code === ERROR_CODE_CHANNEL_ID_CHANGED) {
+      this.socket.on(SOCKET_CONNECTION_REJECTED, error => {
+        if(error.error_code === ERROR_CODE_CHANNEL_ID_CHANGED) {
           console.warn('Session invalidated by the server. New session will be created automatically.')
-          this.storage.removeItem(sessionName)
+          session.clear()
           this.socket.off()
           this.connect(config)
             .then(resolve)
             .catch(reject)
           return
         }
-        reject(`Connection rejected from server. Error: ${JSON.stringify(data)}`)
+        reject(`Connection rejected from server. Error: ${JSON.stringify(error)}`)
       })
 
       this.socket.on(SOCKET_IO_DISCONNECT, () => {
-        this.connectionStateChangedHandler(false)
+        this.online = false
+        this.connectionStateChangedHandler(this.online)
       })
 
       this.socket.on(SOCKET_IO_ERROR, (err) => {
@@ -104,13 +110,9 @@ class Connection {
     })
   }
 
-  isConnected() {
-    return !!this.socket
-  }
-
   emit(event, data) {
     return new Promise((resolve, reject) => {
-      if(!this.isConnected()) {
+      if(!this.socket) {
         reject(ERROR_MESSAGE_NOT_CONNECTED)
         return
       }
@@ -140,6 +142,22 @@ class Connection {
   setConnectionStateChangedHandler(callback) {
     this.connectionStateChangedHandler = callback
   }
+}
+
+function isString(value) {
+  return Object.prototype.toString.call(value) === '[object String]'
+}
+
+function validateConfig(config) {
+  if(!config || !config.channelId) {
+    return 'Could not connect: config.channelId is missing.'
+  }
+
+  if(!isString(config.channelId)) {
+    return `Could not connect: config.channelId must be a string. The provided value is: ${JSON.stringify(config.channelId)}`
+  }
+
+  return null
 }
 
 export default new Connection()

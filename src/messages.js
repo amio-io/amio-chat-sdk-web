@@ -1,4 +1,4 @@
-import connection from './connection'
+import connection from './connection/connection'
 import {
   SOCKET_MESSAGE_CLIENT,
   SOCKET_LIST_MESSAGES
