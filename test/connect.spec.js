@@ -10,6 +10,13 @@ const expect = chai.expect
 const CHANNEL_ID = process.env.TEST_AMIO_CHANNEL_ID
 const CHANNEL_ID2 = process.env.TEST_AMIO_CHANNEL_ID2
 
+console.log('CHANNEL_ID:', CHANNEL_ID)
+console.log('CHANNEL_ID2:', CHANNEL_ID2)
+
+if(!CHANNEL_ID || !CHANNEL_ID2) {
+  throw new Error('Test channels are not defined, could not run tests. Please set TEST_AMIO_CHANNEL_ID and TEST_AMIO_CHANNEL_ID2 envvars.')
+}
+
 describe('connect()', () => {
 
   after(() => {
@@ -45,7 +52,9 @@ describe('connect()', () => {
   })
 
   it('connection accepted', () => {
-    return amioChat.connect({channelId: CHANNEL_ID})
+    const hovno = {channelId: CHANNEL_ID}
+    console.log('hovno', hovno)
+    return amioChat.connect(hovno)
       .then(() => {
         expect(amioChat.getSessionId()).to.not.be.undefined
       })
