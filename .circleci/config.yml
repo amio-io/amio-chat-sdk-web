@@ -37,6 +37,9 @@ jobs:
           name: List files
           command: ls -la
 
+      - run: echo $TEST_AMIO_CHANNEL_ID
+      - run: set
+
       - run: npm run build
       - run: npm run test
 
