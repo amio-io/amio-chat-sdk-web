@@ -10,6 +10,7 @@ const expect = chai.expect
 const CHANNEL_ID = process.env.TEST_AMIO_CHANNEL_ID
 const CHANNEL_ID2 = process.env.TEST_AMIO_CHANNEL_ID2
 
+console.log('process.env', process.env)
 console.log('CHANNEL_ID:', CHANNEL_ID)
 console.log('CHANNEL_ID2:', CHANNEL_ID2)
 
@@ -52,9 +53,7 @@ describe('connect()', () => {
   })
 
   it('connection accepted', () => {
-    const hovno = {channelId: CHANNEL_ID}
-    console.log('hovno', hovno)
-    return amioChat.connect(hovno)
+    return amioChat.connect({channelId: CHANNEL_ID})
       .then(() => {
         expect(amioChat.getSessionId()).to.not.be.undefined
       })
