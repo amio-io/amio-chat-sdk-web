@@ -5,13 +5,8 @@ import {
 
 class Postbacks {
 
-  send(postbackPayload) {
+  send(postbackPayload = null) {
     return new Promise((resolve, reject) => {
-      if(!postbackPayload || typeof postbackPayload !== 'string') {
-        reject('Postback payload has to be a valid, non-empty string.')
-        return
-      }
-
       const data = {
         payload: postbackPayload
       }
