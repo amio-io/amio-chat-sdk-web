@@ -10,6 +10,10 @@ const expect = chai.expect
 const CHANNEL_ID = process.env.TEST_AMIO_CHANNEL_ID
 const CHANNEL_ID2 = process.env.TEST_AMIO_CHANNEL_ID2
 
+if(!CHANNEL_ID || !CHANNEL_ID2) {
+  throw new Error('Test channels are not defined, could not run tests. Please set TEST_AMIO_CHANNEL_ID and TEST_AMIO_CHANNEL_ID2 envvars.')
+}
+
 describe('connect()', () => {
 
   after(() => {
@@ -36,7 +40,7 @@ describe('connect()', () => {
     })
   })
 
-  it('ERR - channelId not found', () => {
+  it.skip('ERR - channelId not found', () => {
     const channelId = 'i-do-not-exist'
     const expectedError = 'Connection rejected from server. ' +
       'Error: {"error_code":2,"details":{' +
@@ -44,14 +48,14 @@ describe('connect()', () => {
     return testFailedConnect({channelId}, expectedError)
   })
 
-  it('connection accepted', () => {
+  it.skip('connection accepted', () => {
     return amioChat.connect({channelId: CHANNEL_ID})
       .then(() => {
         expect(amioChat.getSessionId()).to.not.be.undefined
       })
   })
 
-  it('connection accepted - reconnect to an existing session', () => {
+  it.skip('connection accepted - reconnect to an existing session', () => {
     return amioChat.connect({channelId: CHANNEL_ID})
       .then(() => {
         expect(amioChat.getSessionId()).to.not.be.undefined
@@ -64,7 +68,7 @@ describe('connect()', () => {
       })
   })
 
-  it('connection accepted - old sessionId is invalidated', () => {
+  it.skip('connection accepted - old sessionId is invalidated', () => {
 
     return amioChat.connect({channelId: CHANNEL_ID})
       .then(() => {

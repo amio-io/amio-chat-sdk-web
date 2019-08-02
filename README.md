@@ -226,6 +226,24 @@ amioChat.notifications.sendMessagesRead()
 })
 ```
 
+## Postbacks
+
+### postbacks.send(postbackPayload)
+Sends a postback. Postbacks are usually triggered when user presses a button.
+
+Parameters:
+- **postbackPayload** - Arbitrary string that is usually used to determine which button was pressed. Must not be empty.
+
+```js
+amioChat.postbacks.send('test_payload')
+.then(() => {
+  console.log('Postback sent successfully.')
+})
+.catch(err => {
+  console.log('Error while sending postback:', err)
+})
+```
+
 ## Events
 
 ### events.onMessageReceived(func)
