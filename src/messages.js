@@ -6,15 +6,24 @@ import {
 
 class Messages {
 
-  send(content) {
+  send(content, metadata = null) {
     return new Promise((resolve, reject) => {
       if(typeof content !== 'object' || content === null) {
         reject('Content is not an object (did you want to use messages.sendText() instead?).')
         return
       }
 
+      if(metadata && typeof metadata !== 'object') {
+        reject('Metadata must be an object.')
+        return
+      }
+
       const data = {
         content: content
+      }
+
+      if(metadata) {
+        data.metadata = metadata
       }
 
       connection.emit(SOCKET_MESSAGE_CLIENT, data)
@@ -23,16 +32,16 @@ class Messages {
     })
   }
 
-  sendText(text) {
+  sendText(text, metadata = null) {
     const content = {
       type: 'text',
       payload: text
     }
 
-    return this.send(content)
+    return this.send(content, metadata)
   }
 
-  sendImage(url) {
+  sendImage(url, metadata = null) {
     const content = {
       type: 'image',
       payload: {
@@ -40,7 +49,7 @@ class Messages {
       }
     }
 
-    return this.send(content)
+    return this.send(content, metadata)
   }
 
   list(nextCursor, max = 10) {

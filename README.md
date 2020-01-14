@@ -101,16 +101,19 @@ Returns `true` if the client is successfully connected to Amio Chat server.
 ### getSessionId()
 It returns session ID of the client connected to Amio Chat server. It return `null` if the connection was not successful. 
 
-### messages.send(content)
+### messages.send(content, metadata)
 Sends a message.
 
 Parameters:
 - **content** - Message content. See [Amio documentation](https://docs.amio.io/v1.0/reference#messages-send-message) for details about the format.
+- **metadata** - Optional. Add [metadata](https://docs.amio.io/v1.0/reference#messages-metadata) to the message. Metadata has to be an object and can carry whatever data needed to be sent along with the message.
 
 ```js
 amioChat.messages.send({
   type: 'text',
   payload: 'Hello world'
+}, {
+  any: "arbitrary data"
 })
 .then(() => {
   console.log('Message sent successfully')
@@ -121,16 +124,18 @@ amioChat.messages.send({
 ```
 
 ### messages.sendText(text)
-Sends a text message. This is just a handy shortcut for `messages.send({type: 'text', payload: '...'})`
+Sends a text message. This is just a handy shortcut for `messages.send({type: 'text', payload: '...'}, metadata)`
 
 Parameters:
 - **text** - The content of the text message.
+- **metadata** - Optional. Add [metadata](https://docs.amio.io/v1.0/reference#messages-metadata) to the message. Metadata has to be an object and can carry whatever data needed to be sent along with the message.
 
-### messages.sendImage(url)
+### messages.sendImage(url, metadata)
 Sends an image message. This is just a handy shortcut for `messages.send({type: 'image', payload: '...'})`
 
 Parameters:
 - **url** - The URL of the image.
+- **metadata** - Optional. Add [metadata](https://docs.amio.io/v1.0/reference#messages-metadata) to the message. Metadata has to be an object and can carry whatever data needed to be sent along with the message.
 
 ### messages.list(nextCursor, max)
 Loads messages from message history. Can be called multiple times to move further back in history.
@@ -155,6 +160,9 @@ Response format:
       "content": {
         "type": "text",
         "payload": "World"
+      },
+      "metadata": {
+        "any": "arbitrary data"
       }
     },
     { 
@@ -259,6 +267,9 @@ Parameters:
     "type": "{{MESSAGE TYPE}}",
     "payload": "{{MESSAGE PAYLOAD}}"
   },
+  "metadata": {
+    "any": "arbitrary data"
+  },
   "sent": "{{SENT_TIMESTAMP}}",
   "delivered": "{{DELIVERED_TIMESTAMP}}",
   "read": "{{READ_TIMESTAMP}}"
@@ -284,6 +295,9 @@ Parameters:
   "content": {
     "type": "{{MESSAGE TYPE}}",
     "payload": "{{MESSAGE PAYLOAD}}"
+  },
+  "metadata": {
+    "any": "arbitrary data"
   },
   "sent": "{{SENT_TIMESTAMP}}",
   "delivered": "{{DELIVERED_TIMESTAMP}}",
