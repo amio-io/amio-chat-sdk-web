@@ -6,6 +6,8 @@ JavaScript client library for Amio Chat.
 
 - [Installation](#installation)
 - [Quickstart](#quickstart)
+- [Best Practices](#best-practices)
+  - [Quick Replies](#quick-replies)
 - [API](#api)
   - [connect(config)](#connectconfig)
   - [disconnect()](#disconnect)
@@ -75,7 +77,7 @@ Minified version available [amio-chat-sdk-web.min.js](lib/amio-chat-sdk-web.min.
 </html>
 ```
 
-## Best practices
+## Best Practices
 
 ### Quick Replies
 Quick Replies are buttons with a set of pre-defined short replies. Their look and feel are subject to front-end implementation, but certain design aspects should always be true:
