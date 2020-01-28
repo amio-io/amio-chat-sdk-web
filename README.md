@@ -85,9 +85,11 @@ Quick Replies are buttons with a set of pre-defined short replies. Their look an
 - When a Quick Reply button is clicked, its `title` is rendered as a text message and, at the same time, a call to Amio Chat server is made (see below)
 - All of the Quick Reply buttons are dismissed as soon as user clicks one or replies using text input
 - Quick Replies can be attached to any message type (text, image...)
+- Text input can be disabled (if desirable) when Quick Reply buttons are displayed
 
 #### Quick Replies API
 When a message is received via [events.onMessageReceived(func)](#eventsonmessagereceivedfunc) callback, the message's `content` can have a `quick_replies` field indicating that one or more Quick Reply buttons should be displayed.
+
 ```json
 {
 "content": {
@@ -107,6 +109,7 @@ When a message is received via [events.onMessageReceived(func)](#eventsonmessage
   ]
 }
 ```
+
 Parameters:
 - **quick_replies** - Array of up to 11 Quick Reply buttons.
   - **type** - Button type. Only `text` is supported.
@@ -115,7 +118,8 @@ Parameters:
   - **image_url** - Optional. URL of an image that would be used as a button icon.
 
 
-When user clicks on of the Quick Reply buttons, use [messages.send(content, metadata)](#messagessendcontent-metadata) function to notify Amio Chat server (or use shortcut [messages.sendQuickReply(text, quickReplyPayload, metadata)](#messagessendquickreplytext-quickreplypayload-metadata)). The `content` must be a text message with Quick Reply's title as a `payload` and `quick_reply` field with Quick Reply's `payload`:
+When user clicks on one of the Quick Reply buttons, use [messages.send(content, metadata)](#messagessendcontent-metadata) function to notify Amio Chat server (or use shortcut [messages.sendQuickReply(text, quickReplyPayload, metadata)](#messagessendquickreplytext-quickreplypayload-metadata)). The `content` must be a text message with Quick Reply's title as a `payload` and `quick_reply` field with Quick Reply's `payload`:
+
 ```json
 {
 "content": {
