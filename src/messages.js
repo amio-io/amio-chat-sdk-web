@@ -52,6 +52,18 @@ class Messages {
     return this.send(content, metadata)
   }
 
+  sendQuickReply(text, quickReplyPayload, metadata = null) {
+    const content = {
+      type: 'text',
+      payload: text,
+      quick_reply: {
+        payload: quickReplyPayload
+      }
+    }
+
+    return this.send(content, metadata)
+  }
+
   list(nextCursor, max = 10) {
     const params = {
       pagination: {

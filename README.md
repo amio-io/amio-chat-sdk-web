@@ -6,22 +6,28 @@ JavaScript client library for Amio Chat.
 
 - [Installation](#installation)
 - [Quickstart](#quickstart)
+- [Best Practices](#best-practices)
+  - [Quick Replies](#quick-replies)
 - [API](#api)
   - [connect(config)](#connectconfig)
   - [disconnect()](#disconnect)
   - [isConnected()](#isconnected)
   - [getSessionId()](#getsessionid)
-  - [messages.send(content)](#messagessendcontent)
-  - [messages.sendText(text)](#messagessendtexttext)
-  - [messages.sendImage(url)](#messagessendimageurl)
+  - [messages.send(content, metadata)](#messagessendcontent-metadata)
+  - [messages.sendText(text, metadata)](#messagessendtexttext-metadata)
+  - [messages.sendImage(url, metadata)](#messagessendimageurl-metadata)
+  - [messages.sendQuickReply(text, quickReplyPayload, metadata)](#messagessendquickreplytext-quickreplypayload-metadata)
   - [messages.list(nextCursor, max)](#messageslistnextcursor-max)
   - [notifications.send(payload)](#notificationssendpayload)
   - [notifications.sendMessagesRead()](#notificationssendmessagesread)
+  - [postbacks.send(postbackPayload)](#postbackssendpostbackpayload)
 - [Events](#events)
   - [events.onMessageReceived(func)](#eventsonmessagereceivedfunc)
   - [events.onMessageEcho(func)](#eventsonmessageechofunc)
   - [events.onNotificationReceived(func)](#eventsonnotificationreceivedfunc)
   - [events.onConnectionStateChanged(func)](#eventsonconnectionstatechangedfunc)
+- [Tests](#tests)
+- [License](#license)
 
 ## Installation
 
@@ -70,6 +76,61 @@ Minified version available [amio-chat-sdk-web.min.js](lib/amio-chat-sdk-web.min.
   </body>
 </html>
 ```
+
+## Best Practices
+
+### Quick Replies
+Quick Replies are buttons with a set of pre-defined short replies. Their look and feel are subject to front-end implementation, but certain design aspects should always be true:
+- Quick Reply buttons are displayed above the user input
+- When a Quick Reply button is clicked, its `title` is rendered as a text message and, at the same time, a call to Amio Chat server is made (see below)
+- All of the Quick Reply buttons are dismissed as soon as user clicks one or replies using text input
+- Quick Replies can be attached to any message type (text, image...)
+- Text input can be disabled (if desirable) when Quick Reply buttons are displayed
+
+#### Quick Replies API
+When a message is received via [events.onMessageReceived(func)](#eventsonmessagereceivedfunc) callback, the message's `content` can have a `quick_replies` field indicating that one or more Quick Reply buttons should be displayed.
+
+```json
+{
+"content": {
+  "type": "{{MESSAGE TYPE}}",
+  "payload": "{{MESSAGE PAYLOAD}}",
+  "quick_replies": [
+    {
+      "type": "text",
+      "title": "Yes",
+      "payload": "QR_YES"
+    },
+    {
+      "type": "text",
+      "title": "No",
+      "payload": "QR_NO"
+    }
+  ]
+}
+```
+
+Parameters:
+- **quick_replies** - Array of up to 11 Quick Reply buttons.
+  - **type** - Button type. Only `text` is supported.
+  - **title** - Button's title text. Maximum 20 characters.
+  - **payload** - Button's payload is used to identify which button was pressed. Maximum 1000 characters.
+  - **image_url** - Optional. URL of an image that would be used as a button icon.
+
+
+When user clicks on one of the Quick Reply buttons, use [messages.send(content, metadata)](#messagessendcontent-metadata) function to notify Amio Chat server (or use shortcut [messages.sendQuickReply(text, quickReplyPayload, metadata)](#messagessendquickreplytext-quickreplypayload-metadata)). The `content` must be a text message with Quick Reply's title as a `payload` and `quick_reply` field with Quick Reply's `payload`:
+
+```json
+{
+"content": {
+  "type": "text",
+  "payload": "Yes",
+  "quick_reply": {
+    "payload": "QR_YES"
+  }
+}
+```
+
 
 ## API
 
@@ -123,7 +184,7 @@ amioChat.messages.send({
 })
 ```
 
-### messages.sendText(text)
+### messages.sendText(text, metadata)
 Sends a text message. This is just a handy shortcut for `messages.send({type: 'text', payload: '...'}, metadata)`
 
 Parameters:
@@ -131,10 +192,18 @@ Parameters:
 - **metadata** - Optional. Add [metadata](https://docs.amio.io/v1.0/reference#messages-metadata) to the message. Metadata has to be an object and can carry whatever data needed to be sent along with the message.
 
 ### messages.sendImage(url, metadata)
-Sends an image message. This is just a handy shortcut for `messages.send({type: 'image', payload: '...'})`
+Sends an image message. This is just a handy shortcut for `messages.send({type: 'image', payload: '...'}, metadata)`
 
 Parameters:
 - **url** - The URL of the image.
+- **metadata** - Optional. Add [metadata](https://docs.amio.io/v1.0/reference#messages-metadata) to the message. Metadata has to be an object and can carry whatever data needed to be sent along with the message.
+
+### messages.sendQuickReply(text, quickReplyPayload, metadata)
+Sends a text message with Quick Reply payload, indicating that user pressed the Quick Reply button. This is just a handy shortcut for `messages.send({type: 'text', payload: '...', quick_reply: {payload: '...'}}, metadata)`
+
+Parameters:
+- **text** - The content of the text message.
+- **quickReplyPayload** - Payload indicates which Quick Reply button has been pressed.
 - **metadata** - Optional. Add [metadata](https://docs.amio.io/v1.0/reference#messages-metadata) to the message. Metadata has to be an object and can carry whatever data needed to be sent along with the message.
 
 ### messages.list(nextCursor, max)
@@ -234,8 +303,6 @@ amioChat.notifications.sendMessagesRead()
 })
 ```
 
-## Postbacks
-
 ### postbacks.send(postbackPayload)
 Sends a postback. Postbacks are usually triggered when user presses a button.
 
@@ -265,7 +332,14 @@ Parameters:
   "direction": "received",
   "content": {
     "type": "{{MESSAGE TYPE}}",
-    "payload": "{{MESSAGE PAYLOAD}}"
+    "payload": "{{MESSAGE PAYLOAD}}",
+    "quick_replies": [
+      {
+        "type": "text",
+        "title": "Click me!",
+        "payload": "DEVELOPER_DEFINED_PAYLOAD"
+      }
+    ]
   },
   "metadata": {
     "any": "arbitrary data"
