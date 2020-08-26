@@ -2,8 +2,6 @@
 
 JavaScript client library for Amio Chat.
 
-**!!! THIS PROJECT IS CURRENTLY IN BETA !!!**
-
 - [Installation](#installation)
 - [Quickstart](#quickstart)
 - [Best Practices](#best-practices)
@@ -13,9 +11,11 @@ JavaScript client library for Amio Chat.
   - [disconnect()](#disconnect)
   - [isConnected()](#isconnected)
   - [getSessionId()](#getsessionid)
+  - [files.upload(fileName, mimeType, binaryData)](#filesuploadfilename-mimetype-binarydata)
   - [messages.send(content, metadata)](#messagessendcontent-metadata)
   - [messages.sendText(text, metadata)](#messagessendtexttext-metadata)
   - [messages.sendImage(url, metadata)](#messagessendimageurl-metadata)
+  - [messages.sendFile(url, metadata)](#messagessendfileurl-metadata)
   - [messages.sendQuickReply(text, quickReplyPayload, metadata)](#messagessendquickreplytext-quickreplypayload-metadata)
   - [messages.list(nextCursor, max)](#messageslistnextcursor-max)
   - [notifications.send(payload)](#notificationssendpayload)
@@ -160,7 +160,31 @@ Disconnects from Amio Chat server.
 Returns `true` if the client is successfully connected to Amio Chat server.
 
 ### getSessionId()
-It returns session ID of the client connected to Amio Chat server. It return `null` if the connection was not successful. 
+It returns session ID of the client connected to Amio Chat server. Returns `null` if the connection was not successful. 
+
+### files.upload(fileName, mimeType, binaryData)
+Uploads the specified file and returns URL of the uploaded file. Can be used in combination with [messages.sendFile(url, metadata)](#messagessendfileurl-metadata) to implement sending of local files through Amio Chat. 
+
+Parameters:
+- **fileName** - Name of the file.
+- **mimeType** - MIME type of the file.
+- **binaryData** - Binary data of the file. Accepts all formats that are accepted by [Buffer.from](https://nodejs.org/api/buffer.html#buffer_static_method_buffer_from_array).
+
+Response format:
+- **url** - URL of the uploaded file.
+
+```js
+amioChat.files.upload('test.txt', 'text/plain', 'test')
+.then((response) => {
+  console.log('File uploaded successfully')
+
+  // Now let's send the file through Amio Chat
+  amioChat.messages.sendFile(response.url)
+})
+.catch(err => {
+  console.log('Error while uploading file:', err)
+})
+```
 
 ### messages.send(content, metadata)
 Sends a message.
@@ -196,6 +220,13 @@ Sends an image message. This is just a handy shortcut for `messages.send({type: 
 
 Parameters:
 - **url** - The URL of the image.
+- **metadata** - Optional. Add [metadata](https://docs.amio.io/v1.0/reference#messages-metadata) to the message. Metadata has to be an object and can carry whatever data needed to be sent along with the message.
+
+### messages.sendFile(url, metadata)
+Sends an file message. This is just a handy shortcut for `messages.send({type: 'file', payload: '...'}, metadata)`
+
+Parameters:
+- **url** - The URL of the file.
 - **metadata** - Optional. Add [metadata](https://docs.amio.io/v1.0/reference#messages-metadata) to the message. Metadata has to be an object and can carry whatever data needed to be sent along with the message.
 
 ### messages.sendQuickReply(text, quickReplyPayload, metadata)

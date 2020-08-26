@@ -4,6 +4,7 @@ import events from './events'
 import messages from './messages'
 import notifications from './notifications'
 import postbacks from './postbacks'
+import files from './files'
 
 class AmioChatClient {
 
@@ -12,6 +13,7 @@ class AmioChatClient {
     this.messages = messages
     this.notifications = notifications
     this.postbacks = postbacks
+    this.files = files
   }
 
   connect(config) {

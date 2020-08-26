@@ -52,6 +52,17 @@ class Messages {
     return this.send(content, metadata)
   }
 
+  sendFile(url, metadata = null) {
+    const content = {
+      type: 'file',
+      payload: {
+        url: url
+      }
+    }
+
+    return this.send(content, metadata)
+  }
+
   sendQuickReply(text, quickReplyPayload, metadata = null) {
     const content = {
       type: 'text',
