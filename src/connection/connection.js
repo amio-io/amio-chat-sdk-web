@@ -87,6 +87,14 @@ class Connection {
         reject(`Connection rejected from server. Error: ${JSON.stringify(error)}`)
       })
 
+      this.socket.on('reconnect_attempt', () => {
+        // if we didn't set the sessionId here, we could end up with a new one after reconnect
+        const sessionId = session.getId()
+        if(sessionId) {
+          this.socket.io.opts.query.session_id = sessionId
+        }
+      })
+
       this.socket.on(SOCKET_IO_DISCONNECT, () => {
         this.online = false
         this.connectionStateChangedHandler(this.online)
