@@ -36,7 +36,6 @@ class Connection {
 
   connect(config) {
     return new Promise((resolve, reject) => {
-      console.log('x')
       const err = validateConfig(config)
       if(err) {
         reject(err)
@@ -59,7 +58,6 @@ class Connection {
       }
 
       const sessionId = session.getId()
-      console.log('ss', sessionId)
       if(sessionId) {
         opts.query.session_id = sessionId
       }
