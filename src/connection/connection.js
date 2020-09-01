@@ -36,6 +36,7 @@ class Connection {
 
   connect(config) {
     return new Promise((resolve, reject) => {
+      console.log('x')
       const err = validateConfig(config)
       if(err) {
         reject(err)
@@ -58,6 +59,7 @@ class Connection {
       }
 
       const sessionId = session.getId()
+      console.log('ss', sessionId)
       if(sessionId) {
         opts.query.session_id = sessionId
       }
@@ -85,6 +87,14 @@ class Connection {
           return
         }
         reject(`Connection rejected from server. Error: ${JSON.stringify(error)}`)
+      })
+
+      this.socket.on('reconnect_attempt', () => {
+        // if we didn't set the sessionId here, we could end up with a new one after reconnect
+        const sessionId = session.getId()
+        if(sessionId) {
+          this.socket.io.opts.query.session_id = sessionId
+        }
       })
 
       this.socket.on(SOCKET_IO_DISCONNECT, () => {

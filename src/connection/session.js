@@ -4,24 +4,23 @@ import {
 
 class Session {
 
-  constructor() {
+  _getStorage() {
     if(window.localStorage) {
-      this.storage = window.localStorage
-    } else {
-      this.storage = new TestStorage()
+      return window.localStorage
     }
+    return new TestStorage()
   }
 
   getId() {
-    return this.storage.getItem(STORAGE_SESSION_NAME)
+    return this._getStorage().getItem(STORAGE_SESSION_NAME)
   }
 
   setId(value) {
-    return this.storage.setItem(STORAGE_SESSION_NAME, value)
+    return this._getStorage().setItem(STORAGE_SESSION_NAME, value)
   }
 
   clear() {
-    return this.storage.removeItem(STORAGE_SESSION_NAME)
+    return this._getStorage().removeItem(STORAGE_SESSION_NAME)
   }
 }
 

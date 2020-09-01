@@ -1,6 +1,6 @@
 {
   "name": "amio-chat-sdk-web",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Amio Chat JavaScript SDK for custom webchat implementation. https://amio.io",
   "main": "lib/amio-chat-sdk-web.js",
   "module": "src/amio-chat-client.js",
