@@ -17,6 +17,7 @@ module.exports = {
   SOCKET_MESSAGE_DELIVERED: 'message_delivered',
   SOCKET_LIST_MESSAGES: 'list_messages',
   SOCKET_POSTBACK: 'postback',
+  SOCKET_FILE_UPLOAD: 'file_upload',
 
   ERROR_CODE_CHANNEL_ID_CHANGED: 1,
 
