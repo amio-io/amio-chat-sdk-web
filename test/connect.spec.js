@@ -45,23 +45,23 @@ describe('connect()', () => {
     const expectedError = 'Connection rejected from server. ' +
       'Error: {"error_code":2,"details":{' +
       `"message":"Channel with channelId ${channelId} doesn't exist"}}`
-    return testFailedConnect({channelId}, expectedError)
+    return testFailedConnect({channelId, storageType: 'test'}, expectedError)
   })
 
   it.skip('connection accepted', () => {
-    return amioChat.connect({channelId: CHANNEL_ID})
+    return amioChat.connect({channelId: CHANNEL_ID, storageType: 'test'})
       .then(() => {
         expect(amioChat.getSessionId()).to.not.be.undefined
       })
   })
 
   it.skip('connection accepted - reconnect to an existing session', () => {
-    return amioChat.connect({channelId: CHANNEL_ID})
+    return amioChat.connect({channelId: CHANNEL_ID, storageType: 'test'})
       .then(() => {
         expect(amioChat.getSessionId()).to.not.be.undefined
         const firstSessionId = amioChat.getSessionId()
 
-        return amioChat.connect({channelId: CHANNEL_ID})
+        return amioChat.connect({channelId: CHANNEL_ID, storageType: 'test'})
           .then(() => {
             expect(amioChat.getSessionId()).to.eql(firstSessionId)
           })
@@ -70,12 +70,12 @@ describe('connect()', () => {
 
   it.skip('connection accepted - old sessionId is invalidated', () => {
 
-    return amioChat.connect({channelId: CHANNEL_ID})
+    return amioChat.connect({channelId: CHANNEL_ID, storageType: 'test'})
       .then(() => {
         expect(amioChat.getSessionId()).to.not.be.undefined
         const firstSessionId = amioChat.getSessionId()
 
-        return amioChat.connect({channelId: CHANNEL_ID2})
+        return amioChat.connect({channelId: CHANNEL_ID2, storageType: 'test'})
           .then(() => {
             expect(amioChat.getSessionId()).to.not.be.undefined
             expect(amioChat.getSessionId()).to.not.eql(firstSessionId)

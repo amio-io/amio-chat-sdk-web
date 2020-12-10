@@ -1,5 +1,5 @@
 import io from 'socket.io-client'
-import session from './session'
+import SessionManager from './session-manager'
 import {
   AMIO_CHAT_SERVER_URL,
   ERROR_CODE_CHANNEL_ID_CHANGED,
@@ -44,6 +44,8 @@ class Connection {
 
       // for dev purposes: set config._amioChatServerUrl to use a different server
       const serverUrl = config._amioChatServerUrl || AMIO_CHAT_SERVER_URL
+      const storageType = config.storageType || 'local'
+      this.sessionManager = new SessionManager(storageType)
 
       const opts = {
         secure: true,
@@ -57,7 +59,7 @@ class Connection {
         }
       }
 
-      const sessionId = session.getId()
+      const sessionId = this.sessionManager.getId()
       if(sessionId) {
         opts.query.session_id = sessionId
       }
@@ -66,7 +68,7 @@ class Connection {
       this.socket = io(serverUrl, opts)
 
       this.socket.on(SOCKET_CONNECTION_ACCEPTED, data => {
-        session.setId(data.session_id)
+        this.sessionManager.setId(data.session_id)
 
         this.online = true
         this.connectionStateChangedHandler(this.online)
@@ -77,7 +79,7 @@ class Connection {
       this.socket.on(SOCKET_CONNECTION_REJECTED, error => {
         if(error.error_code === ERROR_CODE_CHANNEL_ID_CHANGED) {
           console.warn('Session invalidated by the server. New session will be created automatically.')
-          session.clear()
+          this.sessionManager.clear()
           this.socket.off()
           this.connect(config)
             .then(resolve)
@@ -89,7 +91,7 @@ class Connection {
 
       this.socket.on('reconnect_attempt', () => {
         // if we didn't set the sessionId here, we could end up with a new one after reconnect
-        const sessionId = session.getId()
+        const sessionId = this.sessionManager.getId()
         if(sessionId) {
           this.socket.io.opts.query.session_id = sessionId
         }
