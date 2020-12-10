@@ -2,13 +2,23 @@ import {
   STORAGE_SESSION_NAME
 } from '../constants'
 
-class Session {
+class SessionManager {
+
+  constructor(type) {
+    this.type = type
+  }
 
   _getStorage() {
-    if(window.localStorage) {
-      return window.localStorage
+    // Chrome can return Access Denied error when trying to access window.localStorage
+    try {
+      switch(this.type) {
+        case 'local': return window.localStorage
+        case 'session': return window.sessionStorage
+        default: return new TestStorage() // used in tests
+      }
+    } catch(e) {
+      return new TestStorage()
     }
-    return new TestStorage()
   }
 
   getId() {
@@ -43,4 +53,4 @@ class TestStorage {
   }
 }
 
-export default new Session()
+export default SessionManager
