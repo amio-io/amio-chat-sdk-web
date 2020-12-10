@@ -9,7 +9,7 @@ class SessionManager {
   }
 
   _getStorage() {
-    // Chrome can return Access Denied error when trying to access window.localStorage
+    // Chrome can return Access Denied error when trying to access window.localStorage in Private Mode
     try {
       switch(this.type) {
         case 'local': return window.localStorage
