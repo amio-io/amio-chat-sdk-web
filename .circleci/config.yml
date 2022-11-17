@@ -3,7 +3,7 @@ version: 2.1
 defaults: &defaults
   working_directory: ~/amio-chat-sdk-web
   docker:
-    - image: circleci/node:8.9.1
+    - image: amioio/cci-node-aws:12.16-browsers
 
 commands:
   # TODO to orb
