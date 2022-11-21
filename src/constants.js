@@ -19,6 +19,10 @@ module.exports = {
   SOCKET_POSTBACK: 'postback',
   SOCKET_FILE_UPLOAD: 'file_upload',
   SOCKET_VOICE_UPLOAD: 'voice',
+  SOCKET_VOICE_RT_START: 'voice_rt_start',
+  SOCKET_VOICE_RT_DATA: 'voice_rt_data',
+  SOCKET_VOICE_RT_END: 'voice_rt_end',
+  SOCKET_VOICE_RT_RESULT: 'voice_rt_result',
 
   ERROR_CODE_CHANNEL_ID_CHANGED: 1,
 

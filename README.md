@@ -175,6 +175,29 @@ Parameters:
 - **binaryData** - Binary data of the file. Accepts all formats that are accepted by [Buffer.from](https://nodejs.org/api/buffer.html#buffer_static_method_buffer_from_array).
 
 Response format:
+- **text** - Text transcription of the audio recording.
+
+```js
+amioChat.files.uploadVoice('audio/webm', buffer)
+.then((response) => {
+  console.log('File uploaded successfully')
+
+  // Now let's send the file through Amio Chat
+  amioChat.messages.sendFile(response.url)
+})
+.catch(err => {
+  console.log('Error while uploading file:', err)
+})
+```
+
+### files.uploadVoice(mimeType, binaryData)
+Uploads a voice recording for voice-to-text recognition. This function is recommended for transcripting longer recordings in a request-response manner.
+
+Parameters:
+- **mimeType** - MIME type of the audio.
+- **binaryData** - Binary data of the audio. Accepts all formats that are accepted by [Buffer.from](https://nodejs.org/api/buffer.html#buffer_static_method_buffer_from_array).
+
+Response format:
 - **url** - URL of the uploaded file.
 
 ```js

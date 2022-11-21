@@ -20,6 +20,14 @@ class Events {
     connection.setMessageEchoHandler(() => {
       console.error('MessageEchoHandler is not set, use events.onMessageEcho() to set it.')
     })
+
+    connection.setNotificationReceivedHandler(() => {
+      console.error('NotificationReceivedHandler is not set, use events.onNotificationReceived() to set it.')
+    })
+
+    connection.setDictationResultReceivedHandler(() => {
+      console.error('DictationResultReceivedHandler is not set, use events.onDictationResultReceived() to set it.')
+    })
   }
 
   onMessageReceived(func) {
@@ -36,6 +44,10 @@ class Events {
 
   onConnectionStateChanged(func) {
     connection.setConnectionStateChangedHandler(func)
+  }
+
+  onDictationResultReceived(func) {
+    connection.setDictationResultReceivedHandler(func)
   }
 
 }
