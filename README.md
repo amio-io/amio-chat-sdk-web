@@ -11,7 +11,11 @@ JavaScript client library for Amio Chat.
   - [disconnect()](#disconnect)
   - [isConnected()](#isconnected)
   - [getSessionId()](#getsessionid)
+  - [dictation.sendData(binaryData)](#dictationsenddatabinarydata)
+  - [dictation.start(mimeType)](#dictationstartmimetype)
+  - [dictation.stop()](#dictationstop)
   - [files.upload(fileName, mimeType, binaryData)](#filesuploadfilename-mimetype-binarydata)
+  - [files.uploadVoice(mimeType, binaryData)](#filesuploadvoicemimetype-binarydata)
   - [messages.send(content, metadata)](#messagessendcontent-metadata)
   - [messages.sendText(text, metadata)](#messagessendtexttext-metadata)
   - [messages.sendImage(url, metadata)](#messagessendimageurl-metadata)
@@ -26,6 +30,7 @@ JavaScript client library for Amio Chat.
   - [events.onMessageEcho(func)](#eventsonmessageechofunc)
   - [events.onNotificationReceived(func)](#eventsonnotificationreceivedfunc)
   - [events.onConnectionStateChanged(func)](#eventsonconnectionstatechangedfunc)
+  - [events.onDictationResultReceived(func)](#eventsondictationresultreceivedfunc)
 - [Tests](#tests)
 - [License](#license)
 
@@ -166,19 +171,74 @@ Returns `true` if the client is successfully connected to Amio Chat server.
 ### getSessionId()
 It returns session ID of the client connected to Amio Chat server. Returns `null` if the connection was not successful. 
 
+### dictation.sendData(binaryData)
+Sends audio data to be transcribed as text. The data can only be sent after dictation request is started by calling [dictation.start(mimeType)](#dictationstartmimetype)
+
+Parameters:
+- **binaryData** - Binary data of the audio. Accepts all data types that are accepted by [Buffer.from](https://nodejs.org/api/buffer.html#buffer_static_method_buffer_from_array).
+
+Example usage:
+```js
+amioChat.dictation.start('audio/webm')
+.then(() => {
+  amioChat.dictation.sendData(/* audio data */)
+    .then(() => {
+      console.log('Data sent successfully.')
+    })
+    .catch(() => {
+      console.log('Error while sending audio data:', err)
+    })
+})
+.catch(err => {
+  console.log('Error while starting dictation:', err)
+})
+```
+
+### dictation.start(mimeType)
+Initializes dictation request, making the voice recognition engine ready to receive data.
+
+Parameters:
+- **mimeType** - MIME type of the file.
+
+Example usage:
+```js
+amioChat.dictation.start('audio/webm')
+.then(() => {
+  console.log('Dictation started successfully.')
+})
+.catch(err => {
+  console.log('Error while starting dictation:', err)
+})
+```
+
+### dictation.stop()
+Ends dictation request, marking the voice recognition request as complete.
+
+Example usage:
+```js
+amioChat.dictation.stop()
+.then(() => {
+  console.log('Dictation stopped successfully.')
+})
+.catch(err => {
+  console.log('Error while stopping dictation:', err)
+})
+```
+
 ### files.upload(fileName, mimeType, binaryData)
 Uploads the specified file and returns URL of the uploaded file. Can be used in combination with [messages.sendFile(url, metadata)](#messagessendfileurl-metadata) to implement sending of local files through Amio Chat. 
 
 Parameters:
 - **fileName** - Name of the file.
 - **mimeType** - MIME type of the file.
-- **binaryData** - Binary data of the file. Accepts all formats that are accepted by [Buffer.from](https://nodejs.org/api/buffer.html#buffer_static_method_buffer_from_array).
+- **binaryData** - Binary data of the file. Accepts all data types that are accepted by [Buffer.from](https://nodejs.org/api/buffer.html#buffer_static_method_buffer_from_array).
 
 Response format:
-- **text** - Text transcription of the audio recording.
+- **url** - URL of the uploaded file.
 
+Example usage:
 ```js
-amioChat.files.uploadVoice('audio/webm', buffer)
+amioChat.files.upload('test.txt', 'text/plain', 'test')
 .then((response) => {
   console.log('File uploaded successfully')
 
@@ -193,23 +253,24 @@ amioChat.files.uploadVoice('audio/webm', buffer)
 ### files.uploadVoice(mimeType, binaryData)
 Uploads a voice recording for voice-to-text recognition. This function is recommended for transcripting longer recordings in a request-response manner.
 
+For asynchronous voice-to-text recognition, see [Dictation](#dictationstartmimetype).
+
+
 Parameters:
 - **mimeType** - MIME type of the audio.
-- **binaryData** - Binary data of the audio. Accepts all formats that are accepted by [Buffer.from](https://nodejs.org/api/buffer.html#buffer_static_method_buffer_from_array).
+- **binaryData** - Binary data of the audio. Accepts all data types that are accepted by [Buffer.from](https://nodejs.org/api/buffer.html#buffer_static_method_buffer_from_array).
 
 Response format:
-- **url** - URL of the uploaded file.
+- **text** - Text transcription of the audio recording.
 
+Example usage:
 ```js
-amioChat.files.upload('test.txt', 'text/plain', 'test')
+amioChat.files.uploadVoice('audio/webm', buffer)
 .then((response) => {
-  console.log('File uploaded successfully')
-
-  // Now let's send the file through Amio Chat
-  amioChat.messages.sendFile(response.url)
+  console.log('Transcription:', response.text)
 })
 .catch(err => {
-  console.log('Error while uploading file:', err)
+  console.log('Error while uploading voice:', err)
 })
 ```
 
@@ -220,6 +281,7 @@ Parameters:
 - **content** - Message content. See [Amio documentation](https://docs.amio.io/v1.0/reference#messages-send-message) for details about the format.
 - **metadata** - Optional. Add [metadata](https://docs.amio.io/v1.0/reference#messages-metadata) to the message. Metadata has to be an object and can carry whatever data needed to be sent along with the message.
 
+Example usage:
 ```js
 amioChat.messages.send({
   type: 'text',
@@ -471,6 +533,28 @@ amioChat.events.onConnectionStateChanged((online) => {
   } else {
     console.log('We are offline :(')
   }
+})
+```
+
+### events.onDictationResultReceived(func)
+Sets a callback function that will be called when there's a new result of recognized text from dictation.
+
+See also:
+- [dictation.start(mimeType)](#dictationstartmimetype)
+
+
+Parameters:
+- **func** - Function. It should accept one parameter which contains the trancribed text. The format is following:
+```json
+{
+  "text": "transcribed text"
+}
+```
+
+Example usage:
+```js
+amioChat.events.onDictationResultReceived((data) => {
+  console.log('Received dictation result:' data.text)
 })
 ```
 
