@@ -27,11 +27,10 @@ class Dictation {
     })
   }
 
-  sendData(binaryData, mimeType) {
+  sendData(binaryData) {
     return new Promise((resolve, reject) => {
       const data = {
-        content_buffer: binaryData,
-        mime_type: mimeType
+        content_buffer: Buffer.from(binaryData)
       }
 
       connection.emit(SOCKET_VOICE_RT_DATA, data)
