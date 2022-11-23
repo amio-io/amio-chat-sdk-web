@@ -10,7 +10,8 @@ import {
   SOCKET_IO_ERROR,
   SOCKET_MESSAGE_ECHO,
   SOCKET_MESSAGE_SERVER,
-  SOCKET_NOTIFICATION_SERVER
+  SOCKET_NOTIFICATION_SERVER,
+  SOCKET_VOICE_RT_RESULT
 } from '../constants'
 
 class Connection {
@@ -25,6 +26,8 @@ class Connection {
     this.notificationReceivedHandler = () => {
     }
     this.connectionStateChangedHandler = () => {
+    }
+    this.dictationResultReceived = () => {
     }
   }
 
@@ -117,6 +120,10 @@ class Connection {
       this.socket.on(SOCKET_NOTIFICATION_SERVER, data => {
         this.notificationReceivedHandler(data)
       })
+
+      this.socket.on(SOCKET_VOICE_RT_RESULT, data => {
+        this.dictationResultReceived(data)
+      })
     })
   }
 
@@ -151,6 +158,10 @@ class Connection {
 
   setConnectionStateChangedHandler(callback) {
     this.connectionStateChangedHandler = callback
+  }
+
+  setDictationResultReceivedHandler(callback) {
+    this.dictationResultReceived = callback
   }
 }
 
