@@ -6,10 +6,14 @@ import {
 
 class Notifications {
 
-  send(payload) {
+  send(payload, metadata = null) {
     const data = {
       type: 'custom',
       payload: payload
+    }
+
+    if(metadata) {
+      data.metadata = metadata
     }
 
     return connection.emit(SOCKET_NOTIFICATION_CLIENT, data)
