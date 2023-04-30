@@ -48,7 +48,7 @@
     "eslint-loader": "2.1.1",
     "jsdom": "14.0.0",
     "jsdom-global": "zatziky/jsdom-global#default-url-in-register",
-    "mocha": "6.1.3",
+    "mocha": "10.2.0",
     "npm-version-bump-checker": "1.0.4",
     "nyc": "13.1.0",
     "uglifyjs-webpack-plugin": "1.3.0",
