@@ -63,7 +63,13 @@ class Connection {
       }
 
       const sessionId = this.sessionManager.getId()
-      if(sessionId) {
+      const externalUser = config.externalUser
+      if(externalUser) {
+        opts.query.external_user = {
+          id: externalUser.id,
+          organization_id: externalUser.organizationId
+        }
+      } else if(sessionId) {
         opts.query.session_id = sessionId
       }
 
