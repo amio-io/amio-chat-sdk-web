@@ -145,7 +145,7 @@ Connects to Amio Chat server.
 Parameters:
 - **config** - Configuration object. Currently supported params are:
   - **channelId** - ID of your Amio Chat channel.
-  - **externalUser** - (optional) Object with `id` and `organization_id`, allows pairing of company_customer_contact_id and amio_contact_id
+  - **externalId** - (optional) Allows pairing of company_customer_id with contact_id/channel_id
   - **storageType** - (optional) Allows to choose if session data will be stored in [localStorage](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage) or [sessionStorage](https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage). Default value is `'local'`. Allowed values are:
     - `'local'` - use localStorage
     - `'session'` - use sessionStorage
@@ -153,10 +153,7 @@ Parameters:
 ```js
 amioChat.connect({
   channelId: '6495613231087502282',
-  externalUser: {
-    id: 'externalUserId',
-    organizationId: 'orgId'
-  },
+  externalId: 'externalId',
   storageType: 'local'
 })
 .then(() => {
