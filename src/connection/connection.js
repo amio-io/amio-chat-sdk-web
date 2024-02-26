@@ -63,7 +63,9 @@ class Connection {
       }
 
       const sessionId = this.sessionManager.getId()
-      if(sessionId) {
+      if(config.externalContactId) {
+        opts.query.external_contact_id = config.externalContactId
+      } else if(sessionId) {
         opts.query.session_id = sessionId
       }
 
