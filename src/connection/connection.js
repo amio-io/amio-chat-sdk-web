@@ -18,6 +18,8 @@ class Connection {
 
   constructor() {
     this.online = false
+    this.socket = null
+    this.config = null
 
     this.messageReceivedHandler = () => {
     }
@@ -44,11 +46,51 @@ class Connection {
         reject(err)
         return
       }
+      this.config = config
 
       // for dev purposes: set config._amioChatServerUrl to use a different server
-      const serverUrl = config._amioChatServerUrl || AMIO_CHAT_SERVER_URL
-      const storageType = config.storageType || 'local'
+      const storageType = this.config.storageType || 'local'
       this.sessionManager = new SessionManager(storageType)
+
+      const sessionId = this.sessionManager.getId()
+      if(!sessionId) {
+        // if there is no existing session, we don't want to connect to the server immediately
+        resolve()
+        return
+      }
+
+      // a session exists, connect immediately
+      this.ensureConnection().then(() => {
+        resolve()
+      })
+    })
+  }
+
+  emit(event, data) {
+    return new Promise((resolve, reject) => {
+      this.ensureConnection().then(() => {
+        if(!this.socket) {
+          reject(ERROR_MESSAGE_NOT_CONNECTED)
+          return
+        }
+
+        this.socket.emit(event, data, (response) => {
+          if(response.error_code) {
+            reject(response)
+            return
+          }
+          resolve(response)
+        })
+      })
+    })
+  }
+
+  ensureConnection() {
+    return new Promise((resolve, reject) => {
+      if(this.socket) {
+        resolve()
+        return
+      }
 
       const opts = {
         secure: true,
@@ -58,13 +100,14 @@ class Connection {
         reconnectionAttempts: 99999,
         query: {
           v: 1,
-          channel_id: config.channelId
+          channel_id: this.config.channelId
         }
       }
 
+      const serverUrl = this.config._amioChatServerUrl || AMIO_CHAT_SERVER_URL
       const sessionId = this.sessionManager.getId()
-      if(config.externalContactId) {
-        opts.query.external_contact_id = config.externalContactId
+      if(this.config.externalContactId) {
+        opts.query.external_contact_id = this.config.externalContactId
       } else if(sessionId) {
         opts.query.session_id = sessionId
       }
@@ -86,7 +129,7 @@ class Connection {
           console.warn('Session invalidated by the server. New session will be created automatically.')
           this.sessionManager.clear()
           this.socket.off()
-          this.connect(config)
+          this.connect(this.config)
             .then(resolve)
             .catch(reject)
           return
@@ -125,23 +168,6 @@ class Connection {
 
       this.socket.on(SOCKET_VOICE_RT_RESULT, data => {
         this.dictationResultReceived(data)
-      })
-    })
-  }
-
-  emit(event, data) {
-    return new Promise((resolve, reject) => {
-      if(!this.socket) {
-        reject(ERROR_MESSAGE_NOT_CONNECTED)
-        return
-      }
-
-      this.socket.emit(event, data, (response) => {
-        if(response.error_code) {
-          reject(response)
-          return
-        }
-        resolve(response)
       })
     })
   }
