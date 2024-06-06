@@ -111,8 +111,7 @@ class Connection {
         this.sessionManager.setExternalId(this.config.externalContactId)
       } else if(sessionId) {
         if(this.sessionManager.getExternalId()) {
-          this.sessionManager.clearExternalId()
-          this.sessionManager.clearSessionId()
+          this.sessionManager.clear()
         } else {
           opts.query.session_id = sessionId
         }
@@ -133,7 +132,7 @@ class Connection {
       this.socket.on(SOCKET_CONNECTION_REJECTED, error => {
         if(error.error_code === ERROR_CODE_CHANNEL_ID_CHANGED) {
           console.warn('Session invalidated by the server. New session will be created automatically.')
-          this.sessionManager.clearSessionId()
+          this.sessionManager.clear()
           this.socket.off()
           this.connect(this.config)
             .then(resolve)

@@ -38,12 +38,9 @@ class SessionManager {
     return this._getStorage().setItem(STORAGE_EXTERNAL_ID, value)
   }
 
-  clearSessionId() {
-    return this._getStorage().removeItem(STORAGE_SESSION_NAME)
-  }
-
-  clearExternalId() {
-    return this._getStorage().removeItem(STORAGE_EXTERNAL_ID)
+  clear() {
+    this._getStorage().removeItem(STORAGE_SESSION_NAME)
+    this._getStorage().removeItem(STORAGE_EXTERNAL_ID)
   }
 }
 
