@@ -1,5 +1,6 @@
 import {
-  STORAGE_SESSION_NAME
+  STORAGE_SESSION_NAME,
+  STORAGE_EXTERNAL_ID
 } from '../constants'
 
 class SessionManager {
@@ -21,16 +22,25 @@ class SessionManager {
     }
   }
 
-  getId() {
+  getSessionId() {
     return this._getStorage().getItem(STORAGE_SESSION_NAME)
   }
 
-  setId(value) {
+  getExternalId() {
+    return this._getStorage().getItem(STORAGE_EXTERNAL_ID)
+  }
+
+  setSessionId(value) {
     return this._getStorage().setItem(STORAGE_SESSION_NAME, value)
   }
 
+  setExternalId(value) {
+    return this._getStorage().setItem(STORAGE_EXTERNAL_ID, value)
+  }
+
   clear() {
-    return this._getStorage().removeItem(STORAGE_SESSION_NAME)
+    this._getStorage().removeItem(STORAGE_SESSION_NAME)
+    this._getStorage().removeItem(STORAGE_EXTERNAL_ID)
   }
 }
 

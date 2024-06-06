@@ -52,7 +52,7 @@ class Connection {
       const storageType = this.config.storageType || 'local'
       this.sessionManager = new SessionManager(storageType)
 
-      const sessionId = this.sessionManager.getId()
+      const sessionId = this.sessionManager.getSessionId()
       if(!sessionId) {
         // if there is no existing session, we don't want to connect to the server immediately
         resolve()
@@ -105,18 +105,23 @@ class Connection {
       }
 
       const serverUrl = this.config._amioChatServerUrl || AMIO_CHAT_SERVER_URL
-      const sessionId = this.sessionManager.getId()
+      const sessionId = this.sessionManager.getSessionId()
       if(this.config.externalContactId) {
         opts.query.external_contact_id = this.config.externalContactId
+        this.sessionManager.setExternalId(this.config.externalContactId)
       } else if(sessionId) {
-        opts.query.session_id = sessionId
+        if(this.sessionManager.getExternalId()) {
+          this.sessionManager.clear()
+        } else {
+          opts.query.session_id = sessionId
+        }
       }
 
       this.disconnect()
       this.socket = io(serverUrl, opts)
 
       this.socket.on(SOCKET_CONNECTION_ACCEPTED, data => {
-        this.sessionManager.setId(data.session_id)
+        this.sessionManager.setSessionId(data.session_id)
 
         this.online = true
         this.connectionStateChangedHandler(this.online)
@@ -139,7 +144,7 @@ class Connection {
 
       this.socket.on('reconnect_attempt', () => {
         // if we didn't set the sessionId here, we could end up with a new one after reconnect
-        const sessionId = this.sessionManager.getId()
+        const sessionId = this.sessionManager.getSessionId()
         if(sessionId) {
           this.socket.io.opts.query.session_id = sessionId
         }

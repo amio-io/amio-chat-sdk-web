@@ -2,6 +2,7 @@ module.exports = {
   AMIO_CHAT_SERVER_URL: 'https://chat.amio.io',
 
   STORAGE_SESSION_NAME: 'amio_chat_session',
+  STORAGE_EXTERNAL_ID: 'amio_chat_external_id',
 
   SOCKET_IO_DISCONNECT: 'disconnect',
   SOCKET_IO_ERROR: 'error',
