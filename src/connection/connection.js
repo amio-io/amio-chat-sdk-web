@@ -87,7 +87,7 @@ class Connection {
 
   ensureConnection() {
     return new Promise((resolve, reject) => {
-      if(this.socket) {
+      if(this.socket.connected) {
         resolve()
         return
       }
