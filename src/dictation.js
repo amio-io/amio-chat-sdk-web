@@ -4,6 +4,7 @@ import {
   SOCKET_VOICE_RT_DATA,
   SOCKET_VOICE_RT_END
 } from './constants'
+import { Buffer } from 'buffer'
 
 class Dictation {
 
