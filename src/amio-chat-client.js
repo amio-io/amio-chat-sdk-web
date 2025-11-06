@@ -1,5 +1,4 @@
 import connection from './connection/connection'
-import session from './connection/session-manager'
 import events from './events'
 import messages from './messages'
 import notifications from './notifications'
@@ -31,7 +30,7 @@ class AmioChatClient {
   }
 
   getSessionId() {
-    return session.getId()
+    return connection.sessionManager.getSessionId()
   }
 
 }
