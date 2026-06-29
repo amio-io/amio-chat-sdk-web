@@ -20,6 +20,7 @@ class Connection {
     this.online = false
     this.socket = null
     this.config = null
+    this.connectionPromise = null
 
     this.messageReceivedHandler = () => {
     }
@@ -86,12 +87,15 @@ class Connection {
   }
 
   ensureConnection() {
-    return new Promise((resolve, reject) => {
-      if(this.socket && this.socket.connected) {
-        resolve()
-        return
-      }
+    if(this.socket && this.socket.connected) {
+      return Promise.resolve()
+    }
 
+    if(this.connectionPromise) {
+      return this.connectionPromise
+    }
+
+    const connectionPromise = new Promise((resolve, reject) => {
       const opts = {
         secure: true,
         reconnection: true,
@@ -134,6 +138,7 @@ class Connection {
           console.warn('Session invalidated by the server. New session will be created automatically.')
           this.sessionManager.clear()
           this.socket.off()
+          this.connectionPromise = null
           this.connect(this.config)
             .then(resolve)
             .catch(reject)
@@ -175,6 +180,15 @@ class Connection {
         this.dictationResultReceived(data)
       })
     })
+
+    this.connectionPromise = connectionPromise
+    connectionPromise.finally(() => {
+      if(this.connectionPromise === connectionPromise) {
+        this.connectionPromise = null
+      }
+    })
+
+    return connectionPromise
   }
 
   setMessageReceivedHandler(callback) {
