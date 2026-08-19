@@ -15,11 +15,19 @@ class SessionManager {
       switch(this.type) {
         case 'local': return window.localStorage
         case 'session': return window.sessionStorage
-        default: return new TestStorage() // used in tests
+        default:
+          return this._getTestStorage()
       }
     } catch(e) {
-      return new TestStorage()
+      return this._getTestStorage()
     }
+  }
+
+  _getTestStorage() {
+    if(!this.testStorage) {
+      this.testStorage = new TestStorage()
+    }
+    return this.testStorage
   }
 
   getSessionId() {

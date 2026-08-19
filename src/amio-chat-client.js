@@ -30,7 +30,7 @@ class AmioChatClient {
   }
 
   getSessionId() {
-    return connection.sessionManager.getSessionId()
+    return connection.getSessionId()
   }
 
 }

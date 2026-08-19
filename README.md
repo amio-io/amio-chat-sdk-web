@@ -140,7 +140,7 @@ When user clicks on one of the Quick Reply buttons, use [messages.send(content, 
 ## API
 
 ### connect(config)
-Connects to Amio Chat server.
+Connects to Amio Chat server. Always opens a socket and resolves only after the server accepts the connection (`connection_accepted`).
 
 Parameters:
 - **config** - Configuration object. Currently supported params are:
@@ -150,14 +150,16 @@ Parameters:
     - `'local'` - use localStorage
     - `'session'` - use sessionStorage
 
+The resolved value includes **chatConfig** from the server (theme and language). It is `{}` when the channel has no chat config.
+
 ```js
 amioChat.connect({
   channelId: '6495613231087502282',
   externalContactId: 'externalContactId',
   storageType: 'local'
 })
-.then(() => {
-  console.log('Connection successful')
+.then(({chatConfig}) => {
+  console.log('Connection successful', chatConfig)
 })
 .catch(err => {
   console.log('Connection error:', err)
