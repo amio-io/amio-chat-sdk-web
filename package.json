@@ -1,6 +1,6 @@
 {
   "name": "amio-chat-sdk-web",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "description": "Amio Chat JavaScript SDK for custom webchat implementation. https://amio.io",
   "main": "lib/amio-chat-sdk-web.js",
   "module": "src/amio-chat-client.js",
@@ -31,6 +31,10 @@
   "homepage": "https://github.com/amio-io/amio-chat-sdk-web",
   "dependencies": {
     "socket.io-client": "2.2.0"
+  },
+  "overrides": {
+    "xmlhttprequest-ssl": "1.6.3",
+    "ws": "6.2.4"
   },
   "devDependencies": {
     "@babel/cli": "7.2.3",
